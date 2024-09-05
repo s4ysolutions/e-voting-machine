@@ -1,0 +1,7 @@
+# Ignore everything in latex-out directory
+latex-out/*
+out/*
+
+# Except PDF files
+!latex-out/*.pdf
+!out/*.pdf

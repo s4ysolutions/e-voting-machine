@@ -1,0 +1,58 @@
+/*
+ * E-Voting Machine © 2024 by S4Y Solutions is licensed under CC BY-NC-ND 4.0.
+ * To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
+syntax = "proto3";
+
+service VotingRegistry {
+    rpc RegisterVoting (RegisterVotingRequest) returns (RegisterVotingResponse) {}
+    rpc OpenVoting (OpenVotingRequest) returns (OpenVotingResponse) {}
+    rpc CloseVoting (CloseVotingRequest) returns (CloseVotingResponse) {}
+    rpc VotingStatus (VotingStatusRequest) returns (VotingStatusResponse) {}
+    rpc VotingSubject(VotingSubjectRequest) returns (VotingSubjectResponse) {}
+}
+
+message RegisterVotingRequest {
+    string id = 1;
+    repeated string subject_id = 3;
+}
+
+message RegisterVotingResponse {
+    string id = 1;
+    VotingStatus status = 2;
+}
+
+message OpenVotingRequest {
+    string id = 1;
+}
+
+message OpenVotingResponse {
+    string id = 1;
+    VotingStatus status = 2;
+}
+
+message CloseVotingRequest {
+    string id = 1;
+}
+
+message CloseVotingResponse {
+    string id = 1;
+    VotingStatus status = 2;
+}
+
+message VotingStatusRequest {
+    string id = 1;
+    repeated string subject = 3;
+}
+
+message VotingStatusResponse {
+    VotingStatus status = 1;
+}
+
+enum VotingStatus {
+    VOTING_STATUS_NOT_EXIST = 0;
+    VOTING_STATUS_PLANNED = 1;
+    VOTING_STATUS_OPEN = 2;
+    VOTING_STATUS_CLOSED = 3;
+}

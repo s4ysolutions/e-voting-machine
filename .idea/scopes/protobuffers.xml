@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="protobuffers" pattern="*.proto||file[e-voting-machine]:protobuffers//*" />
+</component>

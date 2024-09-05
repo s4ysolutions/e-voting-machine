@@ -1,0 +1,39 @@
+/*
+ * E-Voting Machine © 2024 by S4Y Solutions is licensed under CC BY-NC-ND 4.0.
+ * To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
+syntax = "proto3";
+
+import "vote-service.proto";
+
+
+service CastLedger {
+    rpc Cast (CastRequest) returns (Vote) {}
+    rpc RequestCastInfo (CastInfoRequest) returns (CastInfoResponse) {}
+    rpc RequestVotingStatistics(VotingStatisticsRequest) returns (VotingStatisticsResponse);
+}
+
+message CastRequest {
+    string smart_contract = 1;
+}
+
+message CastInfoRequest {
+    string id = 1;
+}
+
+message CastInfoResponse {
+    bool cast = 1;
+}
+
+message VotingStatisticsRequest {
+    string voting_id = 1;
+}
+
+message VotingItemsStatistics {
+    int32 yes = 1;
+    int32 no = 2;
+}
+message VotingStatisticsResponse {
+    map <string, VotingItemsStatistics> statistics = 1;
+}

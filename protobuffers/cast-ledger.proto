@@ -1,0 +1,26 @@
+/*
+ * E-Voting Machine © 2024 by S4Y Solutions is licensed under CC BY-NC-ND 4.0.
+ * To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
+syntax = "proto3";
+
+service CastLedger {
+    rpc RequestFirstContractYes (FirstContractYesRequest) returns (ContractResponse) {}
+    rpc RequestFirstContractNo (FirstContractYesRequest) returns (ContractResponse) {}
+    rpc ExecuteContract (ExecuteContractRequest) returns (ContractResponse) {}
+}
+
+message FirstContractYesRequest {
+    string voter_id = 1;
+    string voting_id = 2;
+}
+
+message ContractResponse {
+    string contract = 1;
+}
+
+message ExecuteContractRequest {
+    string contract = 1;
+}
+

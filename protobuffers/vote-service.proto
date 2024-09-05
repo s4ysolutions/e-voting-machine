@@ -1,0 +1,25 @@
+/*
+ * E-Voting Machine © 2024 by S4Y Solutions is licensed under CC BY-NC-ND 4.0.
+ * To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
+syntax = "proto3";
+
+service VoteService {
+    rpc RequestFirstVote (FirstVoteRequest) returns (VoteResponse) {}
+}
+
+message FirstVoteRequest {
+    string voter_id = 1;
+    string voting_id = 2;
+}
+
+message Vote {
+    string id = 1;
+    string smart_contract_yes = 3;
+    string smart_contract_no = 4;
+}
+
+message VoteResponse {
+    Vote vote = 1;
+}
