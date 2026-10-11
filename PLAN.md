@@ -48,6 +48,8 @@ Effort estimates are for one experienced developer.
   - [ ] **Owner** panel: create voting, import voters, open and close
   - [ ] **Voter** panel: authenticate (mock), get ballot, vote, receipt, re-vote
   - [ ] **Public ledger and auditor** panel: entries, recompute tally, verify signatures and invariants
+  - [ ] Readable signed text everywhere (decision D7 in `docs/README.md`), with an editable ledger line
+        that turns red when tampered with and green again when restored
   - [ ] **"Try to cheat"** panel: double ballot, token replay, forged signature,
         cancel without the secret, double cancel. Each one is visibly rejected.
 

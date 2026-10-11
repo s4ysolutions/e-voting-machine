@@ -63,3 +63,24 @@ Proposed decisions. Each one becomes **Accepted** or is replaced during step 2 o
 | D4 | v1 uses a **trusted operator** for issuer unlinkability and cancellation legitimacy, and says so openly | Proposed | Shares one assumption with MACI's coordinator: the operator can see who voted how. Unlike MACI, whose proofs stop even its coordinator from producing a false tally, the v1 operator could flip votes undetected (T14). Removing that trust is on the roadmap ([5](05-trust-model-and-roadmap.md)) |
 | D5 | Re-vote cancels the **whole ballot** (all subjects at once) and issues a whole new ballot | Proposed | Fewer linkable events. See [Q3](07-open-questions.md) |
 | D6 | The ledger is hash-chained, and the operator signs every entry | Proposed | Makes rewriting history detectable. Anchoring the chain head publicly is on the roadmap |
+| D7 | **Readable signed text with a real signature tag.** Every signed object is shown as plain text naming the signer, followed by the start of its real Ed25519 signature (format below) | Proposed | The audience follows the data flow in plain words, while forgery and tampering demos stay genuine because the tag is checked for real (D3) |
+
+### D7 format
+
+```
+[ISSUER ✍] ballot=amber-falcon-42 ⟨7f3a9c⟩
+[OPERATOR ✍ 10:43:15] +1 budget=yes receipt=c-71ab token=amber-falcon-42 ⟨b20e14⟩
+[OPERATOR ✍ 10:51:02] -1 budget=yes ⟨e93d07⟩
+```
+
+- **Everything before `⟨…⟩` is exactly the signed message**, in canonical form. No field is hidden from
+  the signature, so what the audience reads is what is signed.
+- **`⟨…⟩` shows the first 6 hex characters** of the real Ed25519 signature. The full signature is stored
+  and shown on click.
+- **Readable names** such as `amber-falcon-42` or `c-71ab` are derived deterministically from the real
+  hashes (`token_id`, `cast_id`), so they are short but honest.
+- **Each signer has its own label and colour**: `ISSUER`, `OPERATOR`, `OWNER`.
+- **Ballot tokens carry no time.** A public issue time could be matched against the moment a voter's
+  `ballot_issued` flag changed, linking voter and token (T12). Ledger entries carry their `recorded_at`.
+- **Live verification.** Every line is checked as it is displayed. If any character of the text is
+  edited, the line turns red with `⟨✘ doesn't match⟩`, and it turns green again when the text is restored.
