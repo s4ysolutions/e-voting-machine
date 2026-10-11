@@ -71,7 +71,7 @@ Effort estimates are for one experienced developer.
 ### Later, after investment (roadmap only, not part of this plan)
 
 - Blind-signature ballot issuance, so the issuer cannot link a voter to a token
-- Zero-knowledge cancellations, so the operator cannot fake a cancel (MACI-style nullifiers)
+- Zero-knowledge cancellations, so the operator cannot fake a cancel (Semaphore-style nullifiers)
 - Anchor the ledger head on a public blockchain or a transparency log
 - Real identity providers (eID, bank ID, email with risk scoring)
 - Persistence, scaling, multi-operator or threshold setup, and an external security audit

@@ -24,9 +24,11 @@ A voter receives an anonymous **ballot token** and casts it into a public, **add
 Each cast adds `+1` to the chosen options and gives the voter a **receipt** they can find in the ledger.
 A voter may **re-vote** at any time while the voting is open. The service then adds a `-1`
 **cancellation** for the earlier choice and hands out a new ballot token. Nothing is ever deleted or
-edited. Cancellations are deliberately **not publicly linked** to the cast they cancel, so a coercer
-shown a receipt cannot tell whether that vote still counts. That is what makes buying or forcing a
-vote pointless.
+edited. Cancellations are deliberately **not publicly linked** to the cast they cancel, so a receipt
+shown to a coercer does not prove that the vote still counts. This makes buying or forcing a vote far
+less reliable. How strong that protection is depends on enough other voters cancelling the same option
+and on how cancellations are published (timing, batching). Both are still open: see T17 and
+[Q6](07-open-questions.md).
 
 ```mermaid
 flowchart LR
@@ -58,6 +60,6 @@ Proposed decisions. Each one becomes **Accepted** or is replaced during step 2 o
 | D1 | The demo is a single TypeScript app that runs entirely in the browser | Proposed | One language, nothing to deploy, no infrastructure that can fail during a pitch |
 | D2 | Ledger entries are **validated data** processed by a published, deterministic rule, not generated code ("smart contracts" as pure functions) | Proposed | Removes the code-injection class of bugs and is easier to audit |
 | D3 | Signatures are Ed25519 public-key signatures, and hashing is SHA-256 | Proposed | Anyone can verify an entry without holding a secret, unlike the current MD5 shared-secret scheme |
-| D4 | v1 uses a **trusted operator** for issuer unlinkability and cancellation legitimacy, and says so openly | Proposed | Same position as MACI's coordinator. Removing the trust is on the roadmap ([5](05-trust-model-and-roadmap.md)) |
+| D4 | v1 uses a **trusted operator** for issuer unlinkability and cancellation legitimacy, and says so openly | Proposed | Shares one assumption with MACI's coordinator: the operator can see who voted how. Unlike MACI, whose proofs stop even its coordinator from producing a false tally, the v1 operator could flip votes undetected (T14). Removing that trust is on the roadmap ([5](05-trust-model-and-roadmap.md)) |
 | D5 | Re-vote cancels the **whole ballot** (all subjects at once) and issues a whole new ballot | Proposed | Fewer linkable events. See [Q3](07-open-questions.md) |
 | D6 | The ledger is hash-chained, and the operator signs every entry | Proposed | Makes rewriting history detectable. Anchoring the chain head publicly is on the roadmap |
