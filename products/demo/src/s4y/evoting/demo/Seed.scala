@@ -11,6 +11,8 @@ import s4y.evoting.voting.domain.vo.VotingDefinition
 object Seed:
   val Mallory = "mallory@x.org"
   val Voters: List[String] = List("alice@x.org", "bob@x.org", "carol@x.org", "dave@x.org", Mallory)
+  /** Voters the background traffic acts for; the presenter's voters are not among them. */
+  val Background: List[String] = (1 to 40).toList.map(n => f"voter-$n%02d@x.org")
 
   private def define(result: s4y.evoting.core.domain.Validated[?, VotingDefinition]): VotingDefinition =
     result.toEither.fold(errors => sys.error(s"invalid seed voting: $errors"), identity)
@@ -29,7 +31,7 @@ object Seed:
   )
 
   def load()(using UseCase[RegisterVotingCommand], UseCase[OpenVotingCommand], UseCase[ImportVotersCommand]): Unit =
-    val voters = Voters.map(v => VoterIdentity.from(v).fold(e => sys.error(s"invalid seed voter: $e"), identity))
+    val voters = (Voters ++ Background).map(v => VoterIdentity.from(v).fold(e => sys.error(s"invalid seed voter: $e"), identity))
     val seeded =
       for
         _ <- RegisterVotingCommand(chairElection).run

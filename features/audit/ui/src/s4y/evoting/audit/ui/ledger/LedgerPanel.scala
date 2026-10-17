@@ -1,7 +1,7 @@
 package s4y.evoting.audit.ui.ledger
 
 import com.raquo.laminar.api.L.*
-import s4y.evoting.audit.ui.ledger.components.{AuditChecks, TallyTable}
+import s4y.evoting.audit.ui.ledger.components.{AuditChecks, FindMyVote, TallyTable}
 import s4y.evoting.audit.ui.ledger.state.LedgerView
 import s4y.evoting.core.crypto.{Party, Verifier}
 import s4y.evoting.core.ui.{SignedLine, SignerLabel}
@@ -28,6 +28,7 @@ object LedgerPanel:
         button("Run audit", onClick --> (_ => view.runAudit())),
         span(cls := "hint", child.text <-- view.runs.map(n => if n == 0 then "" else s"run #$n"))
       ),
+      FindMyVote(view.audit.map(_.toOption.flatten.fold(Nil)(_._1.own))),
       child <-- view.audit.map {
         case Left(message)  => div(cls := "notice rejected", s"Infrastructure failure: $message")
         case Right(None)    => div(cls := "empty", "No voting selected.")

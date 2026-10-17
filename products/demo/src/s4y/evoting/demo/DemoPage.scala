@@ -15,17 +15,37 @@ import s4y.evoting.voting.ui.owner.state.OwnerSession
 
 /** Page layout: who runs the voting on the left, the voter in the middle, the public on the right. */
 object DemoPage:
-  def apply(owner: OwnerSession, registry: RegistrySession, voter: VoterSession, ledger: LedgerView, cheat: CheatSession)(using
-      Verifier[Party.Issuer],
-      Verifier[Party.Operator]
-  ): HtmlElement =
+  def apply(
+      owner: OwnerSession,
+      registry: RegistrySession,
+      voter: VoterSession,
+      ledger: LedgerView,
+      cheat: CheatSession,
+      traffic: Traffic,
+      reset: () => Unit
+  )(using Verifier[Party.Issuer], Verifier[Party.Operator]): HtmlElement =
     div(
       cls := "page",
-      headerTag(h1("e-Voting Machine"), p(cls := "subtitle", "Investor demo — everything runs in this browser tab")),
+      traffic.driver(periodMs = 1200),
+      headerTag(
+        cls := "page-head",
+        div(h1("e-Voting Machine"), p(cls := "subtitle", "Investor demo — everything runs in this browser tab")),
+        div(
+          cls := "controls",
+          label(
+            cls := "toggle",
+            input(tpe := "checkbox", checked <-- traffic.enabled.signal, onInput.mapToChecked --> traffic.enabled),
+            "Background traffic",
+            span(cls := "hint", child.text <-- traffic.actions.map(n => if n == 0 then "" else s" ($n actions)"))
+          ),
+          button("Reset demo", onClick --> (_ => reset()))
+        )
+      ),
+      Guide(),
       mainTag(
         cls := "columns",
         sectionTag(cls := "column", aria.label := "Organiser", OwnerPanel(owner), RegistryPanel(registry)),
         sectionTag(cls := "column", aria.label := "Voter", VoterPanel(voter), CheatPanel(cheat)),
-        sectionTag(cls := "column column-wide", aria.label := "Public", LedgerPanel(ledger))
+        sectionTag(cls := "column", aria.label := "Public", LedgerPanel(ledger))
       )
     )

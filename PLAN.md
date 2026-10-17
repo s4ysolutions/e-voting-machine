@@ -57,11 +57,12 @@ Effort estimates are for one experienced developer.
   - [x] **"Try to cheat"** panel: double ballot, token replay, forged signature,
         cancel without the secret, double cancel. Each one is visibly rejected.
 
-- [ ] **7. Demo packaging** (3–4 days)
-  - [ ] Scripted scenario with seeded voters and simulated background traffic
-  - [ ] Coercion walkthrough: the coercer sees the receipt, the voter re-votes, the coercer cannot tell
-  - [ ] One-click reset with deterministic seed data
-  - [ ] Static deploy (GitHub Pages) with no backend
+- [x] **7. Demo packaging** (3–4 days)
+  - [x] Scripted scenario with seeded voters and simulated background traffic
+  - [x] Coercion walkthrough: the coercer sees the receipt, the voter re-votes, the coercer cannot tell
+  - [x] One-click reset with deterministic seed data
+  - [x] Static deploy (GitHub Pages) with no backend: `.github/workflows/pages.yml`; needs Pages
+        enabled with source "GitHub Actions"
 
 - [ ] **8. Pitch deck update**
   - [ ] Align the slides with the design doc's terms and diagrams

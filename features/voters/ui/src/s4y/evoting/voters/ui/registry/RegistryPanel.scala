@@ -37,7 +37,8 @@ object RegistryPanel:
           onClick.compose(_.sample(session.selected)) --> (_.foreach(k => session.importVoters(k, emails.now())))
         )
       ),
-      table(
+      p(cls := "hint", child.text <-- session.registry.map(r => s"${r.size} registered, ${r.count(_._2.ballotIssued)} with a ballot.")),
+      div(cls := "scroll", table(
         cls := "registry",
         thead(tr(th("Pseudonym"), th("Ballot issued"))),
         tbody(
@@ -45,5 +46,5 @@ object RegistryPanel:
             tr(td(cls := "mono", id.raw.take(10) + "…"), td(if voter.ballotIssued then "yes" else "—"))
           ))
         )
-      )
+      ))
     )

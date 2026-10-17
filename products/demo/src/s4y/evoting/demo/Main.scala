@@ -14,20 +14,30 @@ import s4y.evoting.voting.ui.owner.state.OwnerSession
 import s4y.evoting.wiring.VotingSystem
 
 /** Composition root: the only place that names concrete adapters (skill: composition-root).
-  * Keys come from fixed seeds so every run of the demo shows the same public keys. */
+  * Keys come from fixed seeds, so every run and every reset shows the same public keys. */
 object Main:
   private def seed(n: Int): IArray[Byte] = IArray.tabulate[Byte](32)(i => ((n * 37 + i * 11) % 256).toByte)
 
-  def main(args: Array[String]): Unit =
-    val system = VotingSystem(NobleCrypto, BrowserRandomness, NobleKeys.fromSeed[Party.Issuer](seed(1)), NobleKeys.fromSeed[Party.Operator](seed(2)))
+  private def identity(raw: String): VoterIdentity = VoterIdentity.from(raw).fold(e => sys.error(s"$e"), v => v)
+
+  /** A whole fresh demo: new system, seed data, state holders and page. Called again on reset. */
+  private def build(reset: () => Unit): HtmlElement =
+    val system = VotingSystem(
+      NobleCrypto, BrowserRandomness,
+      NobleKeys.fromSeed[Party.Issuer](seed(1)), NobleKeys.fromSeed[Party.Operator](seed(2))
+    )
     import system.given
     given ChangeFeed = ChangeFeed()
     given Randomness = BrowserRandomness
     given Forger     = Forger(NobleKeys.fromSeed[Party.Issuer](seed(66)).signer)
 
     Seed.load()
-    val mallory = VoterIdentity.from(Seed.Mallory).fold(e => sys.error(s"$e"), identity)
-    renderOnDomContentLoaded(
-      dom.document.getElementById("app"),
-      DemoPage(OwnerSession(), RegistrySession(), VoterSession(), LedgerView(), CheatSession(mallory))
+    DemoPage(
+      OwnerSession(), RegistrySession(), VoterSession(), LedgerView(), CheatSession(identity(Seed.Mallory)),
+      Traffic(Seed.Background.map(identity)), reset
     )
+
+  def main(args: Array[String]): Unit =
+    val generation = Var(0)
+    val reset      = () => generation.update(_ + 1)
+    renderOnDomContentLoaded(dom.document.getElementById("app"), div(child <-- generation.signal.map(_ => build(reset))))

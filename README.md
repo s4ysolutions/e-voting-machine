@@ -15,8 +15,9 @@ The core domain is done and tested on the JVM: votings, the voter registry, ball
 casting and re-voting on a signed, hash-chained ledger, and an auditor that checks the public
 invariants. The demo page has every panel: the organiser (define, import voters, open, close),
 the voter's device (ballot, vote, receipt, re-vote), the public ledger and auditor (tally, checks,
-editable signed lines that turn red when tampered with) and "try to cheat". Demo packaging
-(scripted scenario, reset, static deploy) is plan step 7.
+editable signed lines that turn red when tampered with, "find a vote by its receipt") and "try
+to cheat". A collapsible demo script walks through the basics, coercion and cheating; background
+traffic fills the ledger; "Reset demo" starts over from the same seed data.
 
 ## Stack
 
@@ -32,6 +33,14 @@ npm install                              # Vite and the npm packages the app imp
 
 ./mill -w products.demo.fastLinkJS       # terminal 1: compile and relink on every change
 npm run dev                              # terminal 2: serve http://localhost:5173 with hot reload
+```
+
+Production build (what GitHub Pages serves; `.github/workflows/pages.yml` publishes it on every push
+to `main` once Pages is enabled with source "GitHub Actions"):
+
+```bash
+./mill products.demo.fullLinkJS
+SCALAJS_OUTPUT=$PWD/out/products/demo/fullLinkJS.dest/main.js npm run build   # → products/demo/dist
 ```
 
 Tests (run `npm install` first: the Scala.js tests load the `@noble` packages):

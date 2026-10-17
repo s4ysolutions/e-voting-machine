@@ -8,6 +8,8 @@ import { fileURLToPath } from "node:url";
 const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 
 export default defineConfig({
+  // Relative asset URLs, so the built page works from any path (GitHub Pages serves it under /<repo>/).
+  base: "./",
   resolve: {
     alias: {
       "scalajs:main.js": process.env.SCALAJS_OUTPUT ??
