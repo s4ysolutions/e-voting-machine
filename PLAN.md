@@ -27,9 +27,9 @@ Effort estimates are for one experienced developer.
   - [ ] Record the feedback and any design changes it causes
   - [ ] Write the "how we differ from MACI, Estonia, Helios and JCJ" positioning
 
-- [ ] **4. Repository restructuring**
+- [x] **4. Repository restructuring**
   - [x] Top-level `README.md`: what this is, current status, how to run the demo
-  - [ ] Choose a license that permits auditing and patches (CC BY-NC-ND forbids derivatives)
+  - [x] License: keep CC BY-NC-ND 4.0 (Q10)
   - [x] Archive the original Lua proof of concept: kept on branch `legacy/lua-poc`, removed from `main`
   - [x] Remove the unused Flutter template `ui/`
   - [x] Remove `web-ui/` (TypeScript prototype) and the ts-proto `package.json`

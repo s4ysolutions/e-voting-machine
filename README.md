@@ -53,6 +53,11 @@ doc/             pitch decks (LaTeX)
 Each bounded context is split into one Mill module per layer, so the compiler enforces the
 hexagonal layer rules (see `.claude/skills/module-separation`).
 
+## License
+
+[CC BY-NC-ND 4.0](LICENSE): the code may be read, audited and shared non-commercially with
+attribution; modified versions may not be distributed without permission.
+
 ## History
 
 The original Lua proof of concept, an early TypeScript prototype, a Flutter template and the
