@@ -57,13 +57,15 @@ Proposed decisions. Each one becomes **Accepted** or is replaced during step 2 o
 
 | ID | Decision | Status | Why |
 |----|----------|--------|-----|
-| D1 | The demo is a single TypeScript app that runs entirely in the browser | Proposed | One language, nothing to deploy, no infrastructure that can fail during a pitch |
+| D1 | The demo is a single **Scala 3 + Scala.js** app that runs entirely in the browser | Proposed | One language for logic, UI and tests, nothing to deploy, no infrastructure that can fail during a pitch. The domain also compiles for the JVM, so a later backend can reuse it |
 | D2 | Ledger entries are **validated data** processed by a published, deterministic rule, not generated code ("smart contracts" as pure functions) | Proposed | Removes the code-injection class of bugs and is easier to audit |
 | D3 | Signatures are Ed25519 public-key signatures, and hashing is SHA-256 | Proposed | Anyone can verify an entry without holding a secret, unlike the current MD5 shared-secret scheme |
 | D4 | v1 uses a **trusted operator** for issuer unlinkability and cancellation legitimacy, and says so openly | Proposed | Shares one assumption with MACI's coordinator: the operator can see who voted how. Unlike MACI, whose proofs stop even its coordinator from producing a false tally, the v1 operator could flip votes undetected (T14). Removing that trust is on the roadmap ([5](05-trust-model-and-roadmap.md)) |
 | D5 | Re-vote cancels the **whole ballot** (all subjects at once) and issues a whole new ballot | Proposed | Fewer linkable events. See [Q3](07-open-questions.md) |
 | D6 | The ledger is hash-chained, and the operator signs every entry | Proposed | Makes rewriting history detectable. Anchoring the chain head publicly is on the roadmap |
 | D7 | **Readable signed text with a real signature tag.** Every signed object is shown as plain text naming the signer, followed by the start of its real Ed25519 signature (format below) | Proposed | The audience follows the data flow in plain words, while forgery and tampering demos stay genuine because the tag is checked for real (D3) |
+| D8 | **Stack:** Mill 1.x build; Laminar + Airstream UI with plain CSS and no component library; ScalaTest; `@noble/ed25519` + `@noble/hashes` through a Scala.js facade, JDK crypto for JVM tests; Vite to serve in development. No effect library | Proposed | Matches the team's Scala tooling. Every use case is synchronous in the browser, so an effect system would add ceremony without benefit |
+| D9 | **Architecture:** hexagonal, one Mill module per layer per bounded context, dependency injection with `given`/`using` only, one composition root per product. Rules are in [`CLAUDE.md`](../CLAUDE.md) and the project skills in `.claude/skills/` | Proposed | The compiler enforces the layer rules, and the same domain code runs in the demo, in JVM tests and in a future backend |
 
 ### D7 format
 

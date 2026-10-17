@@ -32,17 +32,20 @@ Effort estimates are for one experienced developer.
   - [ ] Choose a license that permits auditing and patches (CC BY-NC-ND forbids derivatives)
   - [ ] Move `lua-reference/` to `archive/` as the original proof of concept
   - [ ] Remove the unused Flutter template `ui/`
-  - [ ] Remove the `webpack-starter` leftovers from `web-ui/`, or start a fresh Vite + TS app
+  - [ ] Remove `web-ui/` (TypeScript prototype); replace the root `package.json` (ts-proto) with one listing Vite and the `@noble/*` packages
+  - [ ] Move the pitch-deck PDF out of `out/`, which becomes Mill's build directory
+  - [ ] Set up the Mill build: core modules, one bounded context, the demo product, Vite (skill `mill-module-layout`)
   - [ ] Replace or retire `protobuffers/` to match the v1 design
-  - [ ] CI on GitHub Actions: lint, typecheck, unit tests
+  - [ ] CI on GitHub Actions: compile, tests, Scala.js link
 
-- [ ] **5. Core domain in TypeScript (pure and tested)** (4–6 days)
+- [ ] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
+  - [ ] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`
   - [ ] Voting Registry and Voters Registry
   - [ ] Ballot Issuer (Ed25519-signed ballot tokens)
   - [ ] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
   - [ ] Append-only, hash-chained, signed Cast Ledger
   - [ ] Tally plus an auditor that checks the public invariants (I1–I7)
-  - [ ] Unit tests for every flow and every rejection path
+  - [ ] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
 
 - [ ] **6. Demo UI** (5–8 days)
   - [ ] **Owner** panel: create voting, import voters, open and close
