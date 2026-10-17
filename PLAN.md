@@ -28,16 +28,16 @@ Effort estimates are for one experienced developer.
   - [ ] Write the "how we differ from MACI, Estonia, Helios and JCJ" positioning
 
 - [ ] **4. Repository restructuring**
-  - [ ] Top-level `README.md`: what this is, current status, how to run the demo
+  - [x] Top-level `README.md`: what this is, current status, how to run the demo
   - [ ] Choose a license that permits auditing and patches (CC BY-NC-ND forbids derivatives)
   - [x] Archive the original Lua proof of concept: kept on branch `legacy/lua-poc`, removed from `main`
   - [x] Remove the unused Flutter template `ui/`
   - [x] Remove `web-ui/` (TypeScript prototype) and the ts-proto `package.json`
-  - [ ] Add a root `package.json` listing Vite and the `@noble/*` packages
-  - [ ] Move the pitch-deck PDF out of `out/`, which becomes Mill's build directory
-  - [ ] Set up the Mill build: core modules, one bounded context, the demo product, Vite (skill `mill-module-layout`)
+  - [x] Add a root `package.json` listing Vite and the `@noble/*` packages
+  - [x] Move the pitch-deck PDF out of `out/`, which becomes Mill's build directory
+  - [x] Set up the Mill build: core modules, one bounded context (`voting`), the demo product, Vite (skill `mill-module-layout`)
   - [x] Retire `protobuffers/` (Q9); kept on branch `legacy/lua-poc`
-  - [ ] CI on GitHub Actions: compile, tests, Scala.js link
+  - [x] CI on GitHub Actions: compile, tests, Scala.js link
 
 - [ ] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
   - [ ] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`

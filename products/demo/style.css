@@ -1,0 +1,65 @@
+/* One stylesheet, no component library. Colours are tokens; signer colours are for D7. */
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --text: #1d2330;
+  --muted: #5d6676;
+  --border: #d9dee6;
+  --accent: #2f5bd3;
+  --ok: #1d7a46;
+  --ok-bg: #e6f4ec;
+  --bad: #b3261e;
+  --bad-bg: #fbe9e7;
+  --signer-issuer: #2f5bd3;
+  --signer-operator: #1d7a46;
+  --signer-owner: #7a3fb3;
+  --radius: 8px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151b;
+    --panel: #1b2029;
+    --text: #e6e9ef;
+    --muted: #9aa3b2;
+    --border: #2d3440;
+    --accent: #7c9cff;
+    --ok: #6fd39b;
+    --ok-bg: #173325;
+    --bad: #ff8a80;
+    --bad-bg: #3a1c1a;
+  }
+}
+
+body { margin: 0; background: var(--bg); }
+.page { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.subtitle { color: var(--muted); margin-top: -8px; }
+.panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.panel h2 { margin-top: 0; }
+
+.notice { padding: 8px 12px; border-radius: var(--radius); margin-bottom: 12px; }
+.notice.done { background: var(--ok-bg); color: var(--ok); }
+.notice.rejected { background: var(--bad-bg); color: var(--bad); }
+.empty { color: var(--muted); }
+
+.cards { display: grid; gap: 12px; }
+.card { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.card-title { font-weight: 600; }
+.card-key { color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.9em; }
+.subjects { padding-left: 18px; }
+.options { color: var(--muted); }
+.actions { display: flex; gap: 8px; }
+.actions button {
+  border: 1px solid var(--accent); background: transparent; color: var(--accent);
+  border-radius: var(--radius); padding: 6px 14px; cursor: pointer;
+}
+.actions button:hover { background: var(--accent); color: var(--panel); }
+
+.status { font-size: 0.8em; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; }
+.status-planned { color: var(--muted); }
+.status-open { color: var(--ok); }
+.status-closed { color: var(--bad); }

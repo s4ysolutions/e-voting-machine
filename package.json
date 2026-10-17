@@ -1,0 +1,17 @@
+{
+  "name": "e-voting-machine",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite products/demo",
+    "build": "vite build products/demo",
+    "preview": "vite preview products/demo"
+  },
+  "dependencies": {
+    "@noble/ed25519": "^3.2.0",
+    "@noble/hashes": "^2.4.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.4"
+  }
+}

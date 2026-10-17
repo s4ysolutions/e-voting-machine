@@ -1,0 +1,118 @@
+//| mill-version: 1.3.0
+//| mill-jvm-version: system
+package build
+
+import mill.*, scalalib.*, scalajslib.*, scalajslib.api.*
+
+// Module layout and rules: .claude/skills/mill-module-layout, module-separation, layers-to-modules
+
+object V:
+  val scala   = "3.3.8"
+  val scalaJS = "1.22.0"
+
+object D:
+  val laminar   = mvn"com.raquo::laminar::17.2.1"
+  val scalatest = mvn"org.scalatest::scalatest::3.2.20"
+
+trait BaseModule extends ScalaModule:
+  def scalaVersion = V.scala
+  override def scalacOptions = super.scalacOptions() ++ Seq(
+    "-deprecation",
+    "-feature",
+    "-unchecked",
+    "-language:strictEquality",
+    "-Wunused:all"
+  )
+
+  /** ScalaTest sub-module; `ScalaTests` is an inner trait, so this one is too. */
+  trait BaseTests extends ScalaTests, TestModule.ScalaTest:
+    override def mvnDeps = Seq(D.scalatest)
+
+trait BaseJsModule extends BaseModule, ScalaJSModule:
+  def scalaJSVersion = V.scalaJS
+  override def moduleKind = ModuleKind.ESModule
+
+// ---------------------------------------------------------------------------
+// core: shared kernel
+// ---------------------------------------------------------------------------
+
+object core extends Module:
+
+  object domain extends BaseModule:                       // InfraFailure, Validated
+    object tests extends BaseTests
+    object domainJs extends BaseJsModule:
+      override def sources = Task { domain.sources() ++ super.sources() }
+
+  object app extends BaseModule:                          // UseCaseCommand, UseCase[C]
+    object appJs extends BaseJsModule:
+      override def sources = Task { app.sources() ++ super.sources() }
+
+  object tx extends BaseModule:                           // Tx, TransactionManager[TX]
+    override def moduleDeps = Seq(core.domain)
+    object txJs extends BaseJsModule:
+      override def sources    = Task { tx.sources() ++ super.sources() }
+      override def moduleDeps = Seq(core.domain.domainJs)
+
+  object infra extends Module:
+    object memory extends BaseModule:                     // MemoryTx, MemoryCell
+      override def moduleDeps = Seq(core.tx)
+      object tests extends BaseTests
+      object memoryJs extends BaseJsModule:
+        override def sources    = Task { memory.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.tx.txJs)
+
+  object ui extends BaseJsModule:                         // ChangeFeed, shared Laminar pieces
+    override def mvnDeps = Seq(D.laminar)
+
+// ---------------------------------------------------------------------------
+// features: one sub-group per bounded context
+// ---------------------------------------------------------------------------
+
+object features extends Module:
+
+  object voting extends Module:
+
+    object domain extends BaseModule:
+      override def moduleDeps = Seq(core.domain)
+      object tests extends BaseTests
+      object domainJs extends BaseJsModule:
+        override def sources    = Task { domain.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.domain.domainJs)
+
+      object workflows extends BaseModule:
+        override def moduleDeps = Seq(domain, core.tx)
+        object tests extends BaseTests:
+          override def moduleDeps = super.moduleDeps ++ Seq(voting.infra.memory)
+        object workflowsJs extends BaseJsModule:
+          override def sources    = Task { workflows.sources() ++ super.sources() }
+          override def moduleDeps = Seq(domain.domainJs, core.tx.txJs)
+
+    object app extends BaseModule:
+      override def moduleDeps = Seq(core.app, domain, domain.workflows)
+      object appJs extends BaseJsModule:
+        override def sources    = Task { app.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.app.appJs, domain.domainJs, domain.workflows.workflowsJs)
+
+    object infra extends Module:
+      object memory extends BaseModule:
+        override def moduleDeps = Seq(domain.workflows, core.infra.memory)
+        object memoryJs extends BaseJsModule:
+          override def sources    = Task { memory.sources() ++ super.sources() }
+          override def moduleDeps = Seq(domain.workflows.workflowsJs, core.infra.memory.memoryJs)
+
+    object ui extends BaseJsModule:
+      override def moduleDeps = Seq(domain.domainJs, app.appJs, core.ui)
+
+// ---------------------------------------------------------------------------
+// products: composition roots
+// ---------------------------------------------------------------------------
+
+object products extends Module:
+
+  object demo extends BaseJsModule:
+    override def mainClass  = Some("s4y.evoting.demo.Main")
+    override def moduleDeps = Seq(
+      core.infra.memory.memoryJs,
+      features.voting.infra.memory.memoryJs,
+      features.voting.ui
+    )
