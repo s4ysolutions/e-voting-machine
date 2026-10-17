@@ -120,7 +120,8 @@
         \column{0.5\textwidth}
         \begin{alertblock}{Against a coercer}
             The receipt proves the vote was cast, not that it still counts. The voter can change
-            it later, alone, and the coercer cannot tell.
+            it later, alone. The coercer cannot tell, as long as other voters' cancellations of the
+            same option hide this one.
         \end{alertblock}
     \end{columns}
 
@@ -152,7 +153,7 @@
     \begin{itemize}\small
         \item \texttt{token\_id = H("token"\,\textbar\,s)}, receipt \texttt{= H("cast"\,\textbar\,s)}: both derived from a secret only the voter holds.
         \item \textbf{Re-vote:} the voter proves the old vote with \texttt{s}; the ledger gets \texttt{-1} entries with no receipt, and the voter a new ballot.
-        \item Every entry is signed and chained to the previous one by its hash: nothing can be rewritten unnoticed.
+        \item Every entry is signed and chained to the previous one by its hash: anyone who kept an earlier copy detects a rewrite. Anchoring the head publicly is on the roadmap.
     \end{itemize}
     \copyrightnote
 \end{frame}

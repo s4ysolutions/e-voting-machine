@@ -13,7 +13,7 @@ object Guide:
         div(
           h3("1. The basics"),
           ol(
-            li("Organiser: Chair election 2027 is open; five voters are registered. The registry shows pseudonyms only."),
+            li("Organiser: Chair election 2027 is open; 45 voters are registered (five for the presenter, 40 for background traffic). The registry shows pseudonyms only."),
             li("Voter: sign in as alice@x.org and get a ballot. It is signed by the issuer; the secret stays on the phone."),
             li("Pick an option and cast. The receipt and its ledger entries appear; the auditor's tally updates and every check passes."),
             li("Ledger: edit any entry — it turns red because the signature no longer matches. Restore it — green again.")

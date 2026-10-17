@@ -11,7 +11,7 @@ import s4y.evoting.core.crypto.*
 import s4y.evoting.core.ui.ChangeFeed
 import s4y.evoting.voters.domain.vo.VoterIdentity
 import s4y.evoting.voting.app.usecases.ListVotingsQuery
-import s4y.evoting.voting.domain.vo.{StoredVoting, VotingDefinition, VotingStatus}
+import s4y.evoting.voting.domain.vo.{StoredVoting, VotingDefinition, VotingKey, VotingStatus}
 
 /** A signing key that is not the issuer's, for the forged-ballot attempt. Built by the composition root. */
 final case class Forger(signer: Signer[Party.Issuer])
@@ -38,7 +38,8 @@ final class CheatSession(mallory: VoterIdentity)(using
   /** The latest attempt first. */
   val outcomes: Signal[List[CheatOutcome]] = _outcomes.signal
 
-  // Mallory's own device: her current secret, ballot, and whether that ballot was cast.
+  // Mallory's own device: the voting it belongs to, her current secret, ballot, and whether that ballot was cast.
+  private var forVoting: Option[VotingKey]                      = None
   private var secret: Option[BallotSecret]                      = None
   private var ballot: Option[Signed[Party.Issuer, BallotToken]] = None
   private var cast                                              = false
@@ -55,6 +56,8 @@ final class CheatSession(mallory: VoterIdentity)(using
 
   /** Honest preparation: Mallory holds a ballot and has cast it. Returns the steps taken. */
   private def ensureCast(v: VotingDefinition): Either[String, List[String]] =
+    if !forVoting.contains(v.key) then
+      forVoting = Some(v.key); secret = None; ballot = None; cast = false
     val issued =
       if ballot.isDefined then Right(Nil)
       else
