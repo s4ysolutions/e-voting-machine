@@ -7,7 +7,9 @@ import s4y.evoting.voting.domain.vo.VotingKey
 opaque type VoterIdentity = String
 object VoterIdentity:
   def from(raw: String): Either[VotersError, VoterIdentity] =
-    val trimmed = raw.trim.toLowerCase(java.util.Locale.ROOT)
+    // ASCII-only lowercasing: the same on every platform and locale (java.util.Locale is not
+    // available in Scala.js, and a Turkish default locale would turn "I" into a dotless "ı").
+    val trimmed = raw.trim.map(c => if c >= 'A' && c <= 'Z' then (c + ('a' - 'A')).toChar else c)
     Either.cond(trimmed.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+"), trimmed, VotersError.InvalidIdentity(raw))
   extension (v: VoterIdentity) def value: String = v
   given CanEqual[VoterIdentity, VoterIdentity] = CanEqual.derived

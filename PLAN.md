@@ -48,13 +48,13 @@ Effort estimates are for one experienced developer.
   - [x] Tally plus an auditor that checks the public invariants (I1–I6; I7 waits for entry timestamps)
   - [x] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
 
-- [ ] **6. Demo UI** (5–8 days)
-  - [ ] **Owner** panel: create voting, import voters, open and close
-  - [ ] **Voter** panel: authenticate (mock), get ballot, vote, receipt, re-vote
-  - [ ] **Public ledger and auditor** panel: entries, recompute tally, verify signatures and invariants
-  - [ ] Readable signed text everywhere (decision D7 in `docs/README.md`), with an editable ledger line
+- [x] **6. Demo UI** (5–8 days)
+  - [x] **Owner** panel: create voting, import voters, open and close
+  - [x] **Voter** panel: authenticate (mock), get ballot, vote, receipt, re-vote
+  - [x] **Public ledger and auditor** panel: entries, recompute tally, verify signatures and invariants
+  - [x] Readable signed text everywhere (decision D7 in `docs/README.md`), with an editable ledger line
         that turns red when tampered with and green again when restored
-  - [ ] **"Try to cheat"** panel: double ballot, token replay, forged signature,
+  - [x] **"Try to cheat"** panel: double ballot, token replay, forged signature,
         cancel without the secret, double cancel. Each one is visibly rejected.
 
 - [ ] **7. Demo packaging** (3–4 days)

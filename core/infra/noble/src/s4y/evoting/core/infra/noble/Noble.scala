@@ -55,3 +55,10 @@ final class NobleVerifier[P <: Party](val publicKey: PublicKey) extends Verifier
     // RFC 8032 strict mode, matching the JDK verifier; noble defaults to ZIP215.
     try Ed25519.verify(toJs(signature.bytes), toJs(Bytes.utf8(text)), toJs(publicKey.bytes), js.Dynamic.literal(zip215 = false))
     catch case _: js.JavaScriptException => false
+
+/** Secret random bytes from the browser's `crypto.getRandomValues`. */
+object BrowserRandomness extends Randomness:
+  def bytes(count: Int): IArray[Byte] =
+    val buffer = new Uint8Array(count)
+    js.Dynamic.global.crypto.getRandomValues(buffer)
+    fromJs(buffer)

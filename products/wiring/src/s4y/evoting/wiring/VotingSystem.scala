@@ -1,5 +1,6 @@
 package s4y.evoting.wiring
 
+import s4y.evoting.audit.app.usecases.*
 import s4y.evoting.audit.domain.PublicRecord
 import s4y.evoting.ballots.app.usecases.*
 import s4y.evoting.ballots.domain.vo.{BallotError, TokenId}
@@ -29,7 +30,7 @@ import s4y.evoting.voting.infra.memory.MemoryVotingRepository
 /** The whole system wired with in-memory adapters (skill: composition-root). Shared by the
   * browser demo (noble crypto) and the JVM harness (JDK crypto); only products depend on it.
   * Each instance is independent, so a demo reset or a test simply builds a new one. */
-final class VotingSystem(crypto: Crypto, issuerKeys: Keys[Party.Issuer], operatorKeys: Keys[Party.Operator]):
+final class VotingSystem(crypto: Crypto, randomness: Randomness, issuerKeys: Keys[Party.Issuer], operatorKeys: Keys[Party.Operator]):
   type TXM = MemoryTx
 
   // 1. capabilities and ports
@@ -40,7 +41,7 @@ final class VotingSystem(crypto: Crypto, issuerKeys: Keys[Party.Issuer], operato
   given Verifier[Party.Operator]     = operatorKeys.verifier
   given TransactionManager[TXM]      = MemoryTransactionManager()
   given votings: VotingRepository[TXM] = MemoryVotingRepository()
-  given voters: VotersRepository[TXM]  = MemoryVotersRepository()
+  given voters: VotersRepository[TXM]  = MemoryVotersRepository(() => "p-" + Bytes.hex(randomness.bytes(16)))
 
   // 2. cross-context adapters: they translate, they decide nothing
   private val votingGate: VotingGate[TXM] = new VotingGate[TXM]:
@@ -85,6 +86,8 @@ final class VotingSystem(crypto: Crypto, issuerKeys: Keys[Party.Issuer], operato
   given UseCase[CastCommand]             = CastUseCase[TXM]()
   given UseCase[RevoteCommand]           = RevoteUseCase[TXM]()
   given UseCase[LedgerQuery]             = LedgerUseCase[TXM]()
+  given PublicRecords                    = publicRecord(_)
+  given UseCase[AuditQuery]              = AuditUseCase()
 
   /** Everything an outside auditor can read about one voting. */
   def publicRecord(voting: VotingKey): Either[InfraFailure, Option[PublicRecord]] =

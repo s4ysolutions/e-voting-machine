@@ -86,8 +86,9 @@ object core extends Module:
       object tests extends ScalaJSTests, TestModule.ScalaTest:
         override def mvnDeps = Seq(D.scalatest)
 
-  object ui extends BaseJsModule:                         // ChangeFeed, shared Laminar pieces
-    override def mvnDeps = Seq(D.laminar)
+  object ui extends BaseJsModule:                         // ChangeFeed, SignedLine, shared Laminar pieces
+    override def moduleDeps = Seq(core.crypto.cryptoJs)
+    override def mvnDeps    = Seq(D.laminar)
 
 // ---------------------------------------------------------------------------
 // features: one sub-group per bounded context
@@ -157,6 +158,9 @@ object features extends Module:
           override def sources    = Task { memory.sources() ++ super.sources() }
           override def moduleDeps = Seq(domain.workflows.workflowsJs, core.infra.memory.memoryJs, core.identity.mint.mintJs)
 
+    object ui extends BaseJsModule:                       // voter registry panel
+      override def moduleDeps = Seq(domain.domainJs, app.appJs, features.voting.app.appJs, core.identity.mint.mintJs, core.ui)
+
   object ballots extends Module:
 
     object domain extends BaseModule:
@@ -219,6 +223,12 @@ object features extends Module:
           override def sources    = Task { memory.sources() ++ super.sources() }
           override def moduleDeps = Seq(domain.workflows.workflowsJs, core.infra.memory.memoryJs)
 
+    object ui extends BaseJsModule:                       // voter device and "try to cheat" panels
+      override def moduleDeps = Seq(
+        domain.domainJs, app.appJs, features.ballots.app.appJs, features.voting.app.appJs,
+        features.voters.domain.domainJs, core.ui
+      )
+
   object audit extends Module:
 
     object domain extends BaseModule:                     // pure: tally and invariants over public data
@@ -230,6 +240,15 @@ object features extends Module:
         override def sources    = Task { domain.sources() ++ super.sources() }
         override def moduleDeps = Seq(core.crypto.cryptoJs, features.voting.domain.domainJs,
                                       features.ballots.domain.domainJs, features.casting.domain.domainJs)
+
+    object app extends BaseModule:                        // AuditQuery over the PublicRecords port
+      override def moduleDeps = Seq(core.app, domain)
+      object appJs extends BaseJsModule:
+        override def sources    = Task { app.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.app.appJs, domain.domainJs)
+
+    object ui extends BaseJsModule:                       // public ledger and auditor panel
+      override def moduleDeps = Seq(app.appJs, features.voting.app.appJs, core.ui)
 
 // ---------------------------------------------------------------------------
 // products: composition roots
@@ -244,7 +263,7 @@ object products extends Module:
       features.voters.app, features.voters.infra.memory,
       features.ballots.app, features.ballots.infra.memory,
       features.casting.app, features.casting.infra.memory,
-      features.audit.domain
+      features.audit.app
     )
     object wiringJs extends BaseJsModule:
       override def sources    = Task { wiring.sources() ++ super.sources() }
@@ -253,7 +272,7 @@ object products extends Module:
         features.voters.app.appJs, features.voters.infra.memory.memoryJs,
         features.ballots.app.appJs, features.ballots.infra.memory.memoryJs,
         features.casting.app.appJs, features.casting.infra.memory.memoryJs,
-        features.audit.domain.domainJs
+        features.audit.app.appJs
       )
 
   /** JVM test product: the scenario DSL over the full wiring with JDK crypto. */
@@ -264,7 +283,10 @@ object products extends Module:
   object demo extends BaseJsModule:
     override def mainClass  = Some("s4y.evoting.demo.Main")
     override def moduleDeps = Seq(
-      core.infra.memory.memoryJs,
-      features.voting.infra.memory.memoryJs,
-      features.voting.ui
+      wiring.wiringJs,
+      core.infra.noble,
+      features.voting.ui,
+      features.voters.ui,
+      features.casting.ui,
+      features.audit.ui
     )

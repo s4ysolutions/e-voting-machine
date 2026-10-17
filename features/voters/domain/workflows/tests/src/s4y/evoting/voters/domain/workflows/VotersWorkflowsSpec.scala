@@ -22,6 +22,13 @@ class VotersWorkflowsSpec extends AnyFunSuite:
     assert(VoterIdentity.from(" Alice@Example.org ").map(_.value) == Right("alice@example.org"))
     assert(VoterIdentity.from("not an email").isLeft)
 
+  test("identities lowercase the same way under any default locale"):
+    val saved = java.util.Locale.getDefault
+    try
+      java.util.Locale.setDefault(java.util.Locale.forLanguageTag("tr"))
+      assert(VoterIdentity.from("ALICE@X.ORG").map(_.value) == Right("alice@x.org"))
+    finally java.util.Locale.setDefault(saved)
+
   test("import is all or nothing"):
     withRegistry {
       assert(VotersWorkflows.importVoters(voting, List(id("a@x.org"), id("b@x.org"))).map(_.size) == Right(2))

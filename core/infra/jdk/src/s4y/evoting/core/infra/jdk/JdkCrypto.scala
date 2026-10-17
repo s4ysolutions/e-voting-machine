@@ -50,3 +50,11 @@ object JdkKeys:
     override def nextBytes(bytes: Array[Byte]): Unit =
       require(bytes.length == seed.length, s"expected a ${seed.length}-byte request")
       seed.copyToArray(bytes)
+
+/** Secret random bytes from the JDK's `SecureRandom`. */
+object JdkRandomness extends Randomness:
+  private val random = SecureRandom()
+  def bytes(count: Int): IArray[Byte] =
+    val buffer = new Array[Byte](count)
+    random.nextBytes(buffer)
+    IArray.unsafeFromArray(buffer)

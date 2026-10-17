@@ -1,7 +1,7 @@
 package s4y.evoting.voting.ui.owner
 
 import com.raquo.laminar.api.L.*
-import s4y.evoting.voting.ui.owner.components.VotingCard
+import s4y.evoting.voting.ui.owner.components.{CreateVotingForm, VotingCard}
 import s4y.evoting.voting.ui.owner.state.{Notice, OwnerSession}
 
 /** Entry point of the voting owner's panel (skill: ui-component-container-pattern). */
@@ -17,6 +17,7 @@ object OwnerPanel:
           case Notice.Rejected(text) => div(cls := "notice rejected", text)
         })
       ),
+      CreateVotingForm(session),
       child <-- session.votings.map {
         case Left(message) => div(cls := "notice rejected", message)
         case Right(Nil)    => div(cls := "empty", "No votings yet.")

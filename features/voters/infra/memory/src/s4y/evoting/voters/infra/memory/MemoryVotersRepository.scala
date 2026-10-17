@@ -1,6 +1,5 @@
 package s4y.evoting.voters.infra.memory
 
-import java.util.UUID
 import s4y.evoting.core.identity.Identifier
 import s4y.evoting.core.identity.mint.*
 import s4y.evoting.core.infra.memory.{MemoryCell, MemoryTx}
@@ -8,8 +7,9 @@ import s4y.evoting.voters.domain.vo.*
 import s4y.evoting.voters.domain.workflows.ports.VotersRepository
 import s4y.evoting.voting.domain.vo.VotingKey
 
-/** Pseudonyms are random, so nobody can recompute one from a guessed email (design doc, F1). */
-final class MemoryVotersRepository(newPseudonym: () => String = () => s"p-${UUID.randomUUID()}")
+/** Pseudonyms are random, so nobody can recompute one from a guessed email (design doc, F1).
+  * The composition root supplies the generator from its `Randomness` capability. */
+final class MemoryVotersRepository(newPseudonym: () => String)
     extends VotersRepository[MemoryTx]:
   private val cell = MemoryCell(Vector.empty[(Identifier[Voter], RegisteredVoter)])
 

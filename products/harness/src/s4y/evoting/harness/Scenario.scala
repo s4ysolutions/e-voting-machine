@@ -7,7 +7,7 @@ import s4y.evoting.casting.app.usecases.{CastCommand, RevoteCommand}
 import s4y.evoting.casting.domain.vo.{CastId, Receipt}
 import s4y.evoting.core.app.run
 import s4y.evoting.core.crypto.*
-import s4y.evoting.core.infra.jdk.{JdkCrypto, JdkKeys}
+import s4y.evoting.core.infra.jdk.{JdkCrypto, JdkKeys, JdkRandomness}
 import s4y.evoting.voters.app.usecases.ImportVotersCommand
 import s4y.evoting.voters.domain.vo.VoterIdentity
 import s4y.evoting.voting.app.usecases.{CloseVotingCommand, OpenVotingCommand, RegisterVotingCommand}
@@ -27,6 +27,7 @@ final class Scenario private[harness] (val system: VotingSystem, val voting: Vot
 def scenario(body: Scenario ?=> Unit): Unit =
   val system = VotingSystem(
     JdkCrypto,
+    JdkRandomness,
     JdkKeys.fromSeed[Party.Issuer](IArray.fill[Byte](32)(1)),
     JdkKeys.fromSeed[Party.Operator](IArray.fill[Byte](32)(2))
   )

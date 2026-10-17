@@ -13,8 +13,10 @@ the vote still counts.
 
 The core domain is done and tested on the JVM: votings, the voter registry, ballot issuance,
 casting and re-voting on a signed, hash-chained ledger, and an auditor that checks the public
-invariants. The demo page so far has the voting owner's panel; the voter, ledger/auditor and
-"try to cheat" panels follow in plan step 6.
+invariants. The demo page has every panel: the organiser (define, import voters, open, close),
+the voter's device (ballot, vote, receipt, re-vote), the public ledger and auditor (tally, checks,
+editable signed lines that turn red when tampered with) and "try to cheat". Demo packaging
+(scripted scenario, reset, static deploy) is plan step 7.
 
 ## Stack
 
