@@ -43,8 +43,8 @@ Effort estimates are for one experienced developer.
   - [x] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`
   - [x] Voting Registry (define, open, close) and Voters Registry (import, pseudonyms, ballot-issued flag)
   - [x] Ballot Issuer (Ed25519-signed ballot tokens)
-  - [ ] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
-  - [ ] Append-only, hash-chained, signed Cast Ledger
+  - [x] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
+  - [x] Append-only, hash-chained, signed Cast Ledger
   - [ ] Tally plus an auditor that checks the public invariants (I1–I7)
   - [ ] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
 
