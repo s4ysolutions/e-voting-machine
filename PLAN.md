@@ -39,14 +39,14 @@ Effort estimates are for one experienced developer.
   - [x] Retire `protobuffers/` (Q9); kept on branch `legacy/lua-poc`
   - [x] CI on GitHub Actions: compile, tests, Scala.js link
 
-- [ ] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
+- [x] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
   - [x] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`
   - [x] Voting Registry (define, open, close) and Voters Registry (import, pseudonyms, ballot-issued flag)
   - [x] Ballot Issuer (Ed25519-signed ballot tokens)
   - [x] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
   - [x] Append-only, hash-chained, signed Cast Ledger
   - [x] Tally plus an auditor that checks the public invariants (I1–I6; I7 waits for entry timestamps)
-  - [ ] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
+  - [x] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
 
 - [ ] **6. Demo UI** (5–8 days)
   - [ ] **Owner** panel: create voting, import voters, open and close

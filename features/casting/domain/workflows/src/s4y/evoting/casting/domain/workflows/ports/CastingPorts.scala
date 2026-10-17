@@ -19,6 +19,8 @@ trait LedgerRepository[TX <: Tx]:
 trait SpentTokens[TX <: Tx]:
   def contains(token: TokenId)(using TX): Boolean
   def add(token: TokenId, ballot: Signed[Party.Issuer, BallotToken])(using TX): Unit
+  /** The spent ballots with their issuer signatures, for the public record. */
+  def all(using TX): List[Signed[Party.Issuer, BallotToken]]
 
 /** Private to the operator: which casts were cancelled (T7). Never published. */
 trait CancelledCasts[TX <: Tx]:

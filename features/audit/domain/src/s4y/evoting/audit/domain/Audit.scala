@@ -6,7 +6,8 @@ import s4y.evoting.casting.domain.vo.*
 import s4y.evoting.core.crypto.*
 import s4y.evoting.voting.domain.vo.VotingDefinition
 
-/** Everything an outside auditor can read (design doc F6). */
+/** Everything an outside auditor can read about one voting (design doc F6). `ledger` is the
+  * whole shared ledger, so its hash chain can be checked; the other checks use `own`. */
 final case class PublicRecord(
     definition: VotingDefinition,
     ledger: List[LedgerEntry],
@@ -14,7 +15,9 @@ final case class PublicRecord(
     counts: IssuanceCounts,
     registrySize: Int,
     ballotsIssuedFlags: Int
-)
+):
+  /** This voting's entries. */
+  def own: List[LedgerEntry] = ledger.filter(_.value.voting == definition.key)
 
 enum Invariant derives CanEqual:
   case I1, I2, I3, I4, I5, I6, I7
@@ -35,14 +38,14 @@ object AuditOperations:
     AuditReport(
       List(
         Invariant.I1 -> i1Chain(record.ledger),
-        Invariant.I2 -> i2NeverNegative(record.ledger),
+        Invariant.I2 -> i2NeverNegative(record.own),
         Invariant.I3 -> i3CastsBacked(record),
         Invariant.I4 -> i4FirstBallots(record),
         Invariant.I5 -> i5Revotes(record),
         Invariant.I6 -> i6NetCasts(record),
         Invariant.I7 -> Check.NotChecked("entries carry no timestamps yet")
       ),
-      tally(record.ledger)
+      tally(record.own)
     )
 
   /** Sum of deltas per (subject, option). */
@@ -73,7 +76,7 @@ object AuditOperations:
   /** I3: each receipt has one +1 per subject from one token; that token was issued and spent once. */
   def i3CastsBacked(record: PublicRecord)(using issuer: Verifier[Party.Issuer]): Check =
     val subjects = record.definition.subjects.map(_.key.value).toSet
-    val casts    = record.ledger.filter(_.value.delta == Delta.Plus).groupBy(_.value.castId)
+    val casts    = record.own.filter(_.value.delta == Delta.Plus).groupBy(_.value.castId)
     val spent    = record.spentBallots.map(b => b.value.id -> b).toMap
     val problems =
       casts.toList.flatMap { (castId, entries) =>
@@ -99,7 +102,7 @@ object AuditOperations:
 
   /** I5: re-vote ballots = cancellations, and every subject was cancelled the same number of times. */
   def i5Revotes(record: PublicRecord): Check =
-    val perSubject = record.ledger.filter(_.value.delta == Delta.Minus).groupMapReduce(_.value.subject.value)(_ => 1)(_ + _)
+    val perSubject = record.own.filter(_.value.delta == Delta.Minus).groupMapReduce(_.value.subject.value)(_ => 1)(_ + _)
     val counts     = record.definition.subjects.map(s => perSubject.getOrElse(s.key.value, 0)).distinct
     if counts.sizeIs > 1 then Check.Failed("subjects were cancelled a different number of times")
     else if counts.headOption.getOrElse(0) != record.counts.revoteBallots then
@@ -108,7 +111,7 @@ object AuditOperations:
 
   /** I6: net casts (casts − cancellations) never exceed the first ballots issued. */
   def i6NetCasts(record: PublicRecord): Check =
-    val casts         = record.ledger.flatMap(_.value.castId).distinct.size
+    val casts         = record.own.flatMap(_.value.castId).distinct.size
     val cancellations = record.counts.revoteBallots
     if casts - cancellations > record.counts.firstBallots then
       Check.Failed(s"$casts casts − $cancellations cancellations exceed ${record.counts.firstBallots} first ballots")

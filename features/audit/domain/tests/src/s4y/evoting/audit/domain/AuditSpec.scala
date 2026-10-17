@@ -37,6 +37,7 @@ class AuditSpec extends AnyFunSuite:
       new SpentTokens[MemoryTx]:
         def contains(t: TokenId)(using MemoryTx) = spent.get.exists(_.value.id == t)
         def add(t: TokenId, b: Signed[Party.Issuer, BallotToken])(using MemoryTx) = spent.update(_ :+ b)
+        def all(using MemoryTx) = spent.get
       ,
       MemoryCancelledCasts(),
       new OpenVotings[MemoryTx]:

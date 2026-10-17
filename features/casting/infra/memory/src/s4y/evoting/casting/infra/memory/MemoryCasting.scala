@@ -22,6 +22,7 @@ final class MemorySpentTokens extends SpentTokens[MemoryTx]:
   def contains(token: TokenId)(using MemoryTx): Boolean = cell.get.contains(token)
   def add(token: TokenId, ballot: Signed[Party.Issuer, BallotToken])(using MemoryTx): Unit =
     cell.update(_.updated(token, ballot))
+  def all(using MemoryTx): List[Signed[Party.Issuer, BallotToken]] = cell.get.values.toList
 
 final class MemoryCancelledCasts extends CancelledCasts[MemoryTx]:
   private val cell = MemoryCell(Set.empty[CastId])

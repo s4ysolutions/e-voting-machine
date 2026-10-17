@@ -237,6 +237,30 @@ object features extends Module:
 
 object products extends Module:
 
+  /** Shared wiring of every context; only products depend on it (skill: composition-root). */
+  object wiring extends BaseModule:
+    override def moduleDeps = Seq(
+      core.infra.memory, features.voting.app, features.voting.infra.memory,
+      features.voters.app, features.voters.infra.memory,
+      features.ballots.app, features.ballots.infra.memory,
+      features.casting.app, features.casting.infra.memory,
+      features.audit.domain
+    )
+    object wiringJs extends BaseJsModule:
+      override def sources    = Task { wiring.sources() ++ super.sources() }
+      override def moduleDeps = Seq(
+        core.infra.memory.memoryJs, features.voting.app.appJs, features.voting.infra.memory.memoryJs,
+        features.voters.app.appJs, features.voters.infra.memory.memoryJs,
+        features.ballots.app.appJs, features.ballots.infra.memory.memoryJs,
+        features.casting.app.appJs, features.casting.infra.memory.memoryJs,
+        features.audit.domain.domainJs
+      )
+
+  /** JVM test product: the scenario DSL over the full wiring with JDK crypto. */
+  object harness extends BaseModule:
+    override def moduleDeps = Seq(wiring, core.infra.jdk)
+    object tests extends BaseTests
+
   object demo extends BaseJsModule:
     override def mainClass  = Some("s4y.evoting.demo.Main")
     override def moduleDeps = Seq(
