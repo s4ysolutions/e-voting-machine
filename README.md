@@ -11,9 +11,10 @@ the vote still counts.
 
 ## Status
 
-Early. The build and the first bounded context (**voting**: define, open and close a voting)
-are in place, with the voting owner's panel in the demo. Ballots, casting, re-voting, the ledger
-and the audit panel follow in plan steps 5–6.
+The core domain is done and tested on the JVM: votings, the voter registry, ballot issuance,
+casting and re-voting on a signed, hash-chained ledger, and an auditor that checks the public
+invariants. The demo page so far has the voting owner's panel; the voter, ledger/auditor and
+"try to cheat" panels follow in plan step 6.
 
 ## Stack
 
@@ -22,7 +23,7 @@ page in development. Everything runs in the browser — there is no backend.
 
 ## Run
 
-Prerequisites: JDK 21+ and Node 20+.
+Prerequisites: JDK 21+ and Node 20.19+ or 22.12+ (required by Vite 8).
 
 ```bash
 npm install                              # Vite and the npm packages the app imports
@@ -44,7 +45,10 @@ The repository includes the Mill launcher script (`./mill`); it downloads Mill 1
 
 ```
 core/            shared kernel: Validated, UseCase[C], atomically, in-memory storage, ChangeFeed
-features/voting/ the voting bounded context: domain, workflows, app, infra/memory, ui
+features/        one bounded context each: voting, voters, ballots, casting, audit
+                 (domain, workflows, app, infra/memory, ui)
+products/wiring/ shared wiring of every context (VotingSystem)
+products/harness/ JVM scenario DSL and end-to-end tests
 products/demo/   composition root, page, stylesheet and Vite config
 docs/            design
 doc/             pitch decks (LaTeX)

@@ -1,6 +1,6 @@
 package s4y.evoting.ballots.domain.workflows.ports
 
-import s4y.evoting.ballots.domain.vo.{BallotError, IssuanceCounts}
+import s4y.evoting.ballots.domain.vo.{BallotError, IssuanceCounts, TokenId}
 import s4y.evoting.core.tx.Tx
 import s4y.evoting.voting.domain.vo.VotingKey
 import s4y.evoting.voters.domain.vo.VoterIdentity
@@ -20,5 +20,15 @@ trait IssuanceCounter[TX <: Tx]:
   def countRevote(voting: VotingKey)(using TX): Unit
   def counts(voting: VotingKey)(using TX): IssuanceCounts
 
+/** Has this token already been spent? Implemented by the composition root over the casting
+  * context. A secret reused across votings yields the same token. */
+trait SpentTokenCheck[TX <: Tx]:
+  def isSpent(token: TokenId)(using TX): Boolean
+
 /** The ports the issuer always needs together. */
-final case class IssuerPorts[TX <: Tx](gate: VotingGate[TX], eligibility: Eligibility[TX], counter: IssuanceCounter[TX])
+final case class IssuerPorts[TX <: Tx](
+    gate: VotingGate[TX],
+    eligibility: Eligibility[TX],
+    counter: IssuanceCounter[TX],
+    spent: SpentTokenCheck[TX]
+)

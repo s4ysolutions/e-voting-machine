@@ -12,7 +12,7 @@ private object Facade:
     val hashes: js.Dynamic                                                 = js.native
     def getPublicKey(secretKey: Uint8Array): Uint8Array                    = js.native
     def sign(message: Uint8Array, secretKey: Uint8Array): Uint8Array       = js.native
-    def verify(signature: Uint8Array, message: Uint8Array, publicKey: Uint8Array): Boolean = js.native
+    def verify(signature: Uint8Array, message: Uint8Array, publicKey: Uint8Array, opts: js.Object): Boolean = js.native
 
   @js.native @JSImport("@noble/hashes/sha2.js", JSImport.Namespace)
   object Sha2 extends js.Object:
@@ -52,5 +52,6 @@ object NobleKeys:
 final class NobleVerifier[P <: Party](val publicKey: PublicKey) extends Verifier[P]:
   def verifyText(text: String, signature: Signature): Boolean =
     ready
-    try Ed25519.verify(toJs(signature.bytes), toJs(Bytes.utf8(text)), toJs(publicKey.bytes))
+    // RFC 8032 strict mode, matching the JDK verifier; noble defaults to ZIP215.
+    try Ed25519.verify(toJs(signature.bytes), toJs(Bytes.utf8(text)), toJs(publicKey.bytes), js.Dynamic.literal(zip215 = false))
     catch case _: js.JavaScriptException => false

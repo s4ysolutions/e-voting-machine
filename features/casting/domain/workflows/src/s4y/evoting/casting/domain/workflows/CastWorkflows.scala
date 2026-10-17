@@ -45,7 +45,9 @@ object CastWorkflows:
         _          <- Either.cond(ports.spent.contains(token), (), CastError.NoCastForSecret)
         cast        = ports.ledger.byCast(castId)
         _          <- Either.cond(cast.nonEmpty, (), CastError.NoCastForSecret)
+        _          <- Either.cond(cast.forall(_.value.voting == voting), (), CastError.WrongVoting(voting))
         _          <- Either.cond(!ports.cancelled.contains(castId), (), CastError.CastAlreadyCancelled)
+        _          <- Either.cond(!ports.spent.contains(next), (), CastError.TokenAlreadySpent)
         _           = ports.cancelled.add(castId)
         options     = cast.map(e => e.value.subject -> e.value.option).toMap
         _           = ports.ledger.append(CastOperations.chain(ports.ledger.head, definition, options, Delta.Minus, None, None))

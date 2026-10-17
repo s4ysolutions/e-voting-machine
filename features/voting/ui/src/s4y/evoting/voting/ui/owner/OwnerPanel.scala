@@ -10,10 +10,13 @@ object OwnerPanel:
     div(
       cls := "panel panel-owner",
       h2("Voting owner"),
-      child.maybe <-- session.notice.map(_.map {
-        case Notice.Done(text)     => div(cls := "notice done", text)
-        case Notice.Rejected(text) => div(cls := "notice rejected", text)
-      }),
+      div(
+        role := "status",
+        child.maybe <-- session.notice.map(_.map {
+          case Notice.Done(text)     => div(cls := "notice done", text)
+          case Notice.Rejected(text) => div(cls := "notice rejected", text)
+        })
+      ),
       child <-- session.votings.map {
         case Left(message) => div(cls := "notice rejected", message)
         case Right(Nil)    => div(cls := "empty", "No votings yet.")

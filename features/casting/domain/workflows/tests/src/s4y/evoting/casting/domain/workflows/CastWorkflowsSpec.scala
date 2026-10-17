@@ -44,8 +44,8 @@ class CastWorkflowsSpec extends AnyFunSuite:
 
     def cast(s: BallotSecret, choices: (String, String)*): Either[CastError | InfraFailure, Receipt] =
       CastWorkflows.cast[MemoryTx](ballot(s), CastId.derive(s), choices.toMap)
-    def revote(s: BallotSecret, next: BallotSecret) =
-      CastWorkflows.revote[MemoryTx](key, s, TokenId.derive(next))
+    def revote(s: BallotSecret, next: BallotSecret, in: VotingKey = key) =
+      CastWorkflows.revote[MemoryTx](in, s, TokenId.derive(next))
     def entries: List[LedgerEntry] = CastWorkflows.ledger[MemoryTx].toOption.get
     def tally: Map[(String, String), Int] =
       entries.groupMapReduce(e => (e.value.subject.value, e.value.option.value))(_.value.delta.value)(_ + _)
@@ -100,6 +100,20 @@ class CastWorkflowsSpec extends AnyFunSuite:
     assert(w.revote(secret(9), secret(2)) == Left(CastError.NoCastForSecret))
     assert(w.revote(secret(1), secret(2)).isRight)
     assert(w.revote(secret(1), secret(3)) == Left(CastError.CastAlreadyCancelled))
+
+  test("a re-vote is refused for a cast in another voting, and nothing is cancelled"):
+    val w     = World()
+    val other = VotingKey.from("other-2027").toOption.get
+    w.cast(secret(1), "budget" -> "yes", "board" -> "bob")
+    assert(w.revote(secret(1), secret(2), in = other) == Left(CastError.WrongVoting(other)))
+    assert(w.revote(secret(1), secret(2)).isRight)
+
+  test("a re-vote is refused when the next token is already spent, and the cast stays live"):
+    val w = World()
+    w.cast(secret(1), "budget" -> "yes", "board" -> "bob")
+    assert(w.revote(secret(1), secret(1)) == Left(CastError.TokenAlreadySpent))
+    assert(w.entries.size == 2)
+    assert(w.revote(secret(1), secret(2)).isRight)
 
   test("X7: nothing is accepted while the voting is not open"):
     val w = World(open = false)

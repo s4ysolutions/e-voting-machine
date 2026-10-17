@@ -41,3 +41,4 @@ enum BallotError derives CanEqual:
   case VotingNotOpen(voting: VotingKey)
   case NotEligible(voting: VotingKey)
   case AlreadyIssued(voting: VotingKey)
+  case TokenAlreadySpent

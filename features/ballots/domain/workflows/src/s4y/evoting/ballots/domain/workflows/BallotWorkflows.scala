@@ -20,6 +20,7 @@ object BallotWorkflows:
     tm.atomically[BallotError, Signed[Party.Issuer, BallotToken]]("issue first ballot") {
       for
         _ <- ports.gate.requireOpen(voting)
+        _ <- Either.cond(!ports.spent.isSpent(token), (), BallotError.TokenAlreadySpent)
         _ <- ports.eligibility.markFirstBallotIssued(voting, identity)
       yield
         ports.counter.countFirst(voting)
@@ -32,7 +33,9 @@ object BallotWorkflows:
       signer: Signer[Party.Issuer],
       tx: TX
   ): Either[BallotError, Signed[Party.Issuer, BallotToken]] =
-    ports.gate.requireOpen(voting).map { _ =>
+    ports.gate.requireOpen(voting)
+      .flatMap(_ => Either.cond(!ports.spent.isSpent(token), (), BallotError.TokenAlreadySpent))
+      .map { _ =>
       ports.counter.countRevote(voting)
       signer.sign(BallotToken(voting, token, BallotKind.Revote))
     }

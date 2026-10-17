@@ -9,12 +9,13 @@ import s4y.evoting.voters.domain.workflows.ports.VotersRepository
 import s4y.evoting.voting.domain.vo.VotingKey
 
 /** Pseudonyms are random, so nobody can recompute one from a guessed email (design doc, F1). */
-final class MemoryVotersRepository(newPseudonym: () => String = () => s"p-${UUID.randomUUID().toString.take(8)}")
+final class MemoryVotersRepository(newPseudonym: () => String = () => s"p-${UUID.randomUUID()}")
     extends VotersRepository[MemoryTx]:
   private val cell = MemoryCell(Vector.empty[(Identifier[Voter], RegisteredVoter)])
 
   def insert(voter: RegisteredVoter)(using MemoryTx): Identifier[Voter] =
-    val pseudonym = newPseudonym().identifier[Voter]
+    val taken     = cell.get.iterator.map(_._1).toSet
+    val pseudonym = Iterator.continually(newPseudonym().identifier[Voter]).find(!taken.contains(_)).get
     cell.update(_ :+ (pseudonym -> voter))
     pseudonym
 

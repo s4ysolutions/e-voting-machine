@@ -23,15 +23,19 @@ class BallotWorkflowsSpec extends AnyFunSuite:
     val flagged = MemoryCell(Set.empty[VoterIdentity])
     val gate: VotingGate[MemoryTx] = new VotingGate[MemoryTx]:
       def requireOpen(v: VotingKey)(using MemoryTx) = Either.cond(open, (), BallotError.VotingNotOpen(v))
+    val spentTokens = MemoryCell(Set.empty[TokenId])
+    val spent: SpentTokenCheck[MemoryTx] = new SpentTokenCheck[MemoryTx]:
+      def isSpent(t: TokenId)(using MemoryTx) = spentTokens.get.contains(t)
     val eligibility: Eligibility[MemoryTx] = new Eligibility[MemoryTx]:
       def markFirstBallotIssued(v: VotingKey, who: VoterIdentity)(using MemoryTx) =
         if flagged.get.contains(who) then Left(BallotError.AlreadyIssued(v))
         else Right(flagged.update(_ + who))
 
-  private def issuing(open: Boolean)(test: (TransactionManager[MemoryTx], IssuerPorts[MemoryTx], Signer[Party.Issuer]) ?=> Unit): Unit =
+  private def issuing(open: Boolean, spent: Set[TokenId] = Set.empty)(test: (TransactionManager[MemoryTx], IssuerPorts[MemoryTx], Signer[Party.Issuer]) ?=> Unit): Unit =
     val fakes = Fakes(open)
     given TransactionManager[MemoryTx] = MemoryTransactionManager()
-    given IssuerPorts[MemoryTx]        = IssuerPorts(fakes.gate, fakes.eligibility, MemoryIssuanceCounter())
+    if spent.nonEmpty then summon[TransactionManager[MemoryTx]].atomically[Nothing, Unit]("seed")(Right(fakes.spentTokens.update(_ ++ spent)))
+    given IssuerPorts[MemoryTx]        = IssuerPorts(fakes.gate, fakes.eligibility, MemoryIssuanceCounter(), fakes.spent)
     given Signer[Party.Issuer]         = issuer.signer
     test
 
@@ -54,4 +58,11 @@ class BallotWorkflowsSpec extends AnyFunSuite:
     issuing(open = false) {
       assert(BallotWorkflows.issueFirst(voting, alice, token(1)) == Left(BallotError.VotingNotOpen(voting)))
       assert(BallotWorkflows.counts(voting) == Right(IssuanceCounts(0, 0)))
+    }
+
+  test("a spent token is refused before the voter is flagged or anything counted"):
+    issuing(open = true, spent = Set(token(1))) {
+      assert(BallotWorkflows.issueFirst(voting, alice, token(1)) == Left(BallotError.TokenAlreadySpent))
+      assert(BallotWorkflows.issueFirst(voting, alice, token(2)).isRight)
+      assert(BallotWorkflows.counts(voting) == Right(IssuanceCounts(1, 0)))
     }

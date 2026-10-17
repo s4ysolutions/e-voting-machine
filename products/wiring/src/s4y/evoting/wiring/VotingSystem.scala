@@ -55,7 +55,12 @@ final class VotingSystem(crypto: Crypto, issuerKeys: Keys[Party.Issuer], operato
         case _                                     => BallotError.NotEligible(voting)
       }.map(_ => ())
 
-  given IssuerPorts[TXM] = IssuerPorts(votingGate, eligibility, MemoryIssuanceCounter())
+  private val spentTokens = MemorySpentTokens()
+
+  private val spentCheck: SpentTokenCheck[TXM] = new SpentTokenCheck[TXM]:
+    def isSpent(token: TokenId)(using TXM): Boolean = spentTokens.contains(token)
+
+  given IssuerPorts[TXM] = IssuerPorts(votingGate, eligibility, MemoryIssuanceCounter(), spentCheck)
 
   private val openVotings: OpenVotings[TXM] = new OpenVotings[TXM]:
     def requireOpen(voting: VotingKey)(using TXM) =
@@ -66,7 +71,7 @@ final class VotingSystem(crypto: Crypto, issuerKeys: Keys[Party.Issuer], operato
     def issue(voting: VotingKey, next: TokenId)(using TXM) =
       BallotWorkflows.issueRevote[TXM](voting, next).left.map(e => InfraFailure(s"re-vote ballot: $e"))
 
-  given CastingPorts[TXM] = CastingPorts(MemoryLedger(), MemorySpentTokens(), MemoryCancelledCasts(), openVotings, revoteBallots)
+  given CastingPorts[TXM] = CastingPorts(MemoryLedger(), spentTokens, MemoryCancelledCasts(), openVotings, revoteBallots)
 
   // 3. use cases
   given UseCase[RegisterVotingCommand]   = RegisterVotingUseCase[TXM]()
