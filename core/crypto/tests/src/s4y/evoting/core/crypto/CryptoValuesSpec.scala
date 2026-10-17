@@ -15,5 +15,12 @@ class CryptoValuesSpec extends AnyFunSuite:
     assert(ReadableName.of(IArray[Byte](31, 31, -1)) == "humble-crane-55")
     assert(ReadableName.of(IArray[Byte](32, 32, 100)) == "amber-falcon-0")   // only 5 bits used per word
 
+  test("equal digests are equal values, usable as Set elements"):
+    val a = Digest(IArray[Byte](1, 2, 3))
+    val b = Digest(IArray[Byte](1, 2, 3))
+    assert(a == b)
+    assert(Set(a, b).size == 1)
+    assert(a != Digest(IArray[Byte](1, 2, 4)))
+
   test("the D7 tag is the first 6 hex characters of the signature"):
     assert(Signature(IArray.fill[Byte](64)(-85)).tag == "ababab")
