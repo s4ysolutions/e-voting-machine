@@ -27,46 +27,48 @@ Effort estimates are for one experienced developer.
   - [ ] Record the feedback and any design changes it causes
   - [ ] Write the "how we differ from MACI, Estonia, Helios and JCJ" positioning
 
-- [ ] **4. Repository restructuring**
-  - [ ] Top-level `README.md`: what this is, current status, how to run the demo
-  - [ ] Choose a license that permits auditing and patches (CC BY-NC-ND forbids derivatives)
+- [x] **4. Repository restructuring**
+  - [x] Top-level `README.md`: what this is, current status, how to run the demo
+  - [x] License: keep CC BY-NC-ND 4.0 (Q10)
   - [x] Archive the original Lua proof of concept: kept on branch `legacy/lua-poc`, removed from `main`
   - [x] Remove the unused Flutter template `ui/`
   - [x] Remove `web-ui/` (TypeScript prototype) and the ts-proto `package.json`
-  - [ ] Add a root `package.json` listing Vite and the `@noble/*` packages
-  - [ ] Move the pitch-deck PDF out of `out/`, which becomes Mill's build directory
-  - [ ] Set up the Mill build: core modules, one bounded context, the demo product, Vite (skill `mill-module-layout`)
+  - [x] Add a root `package.json` listing Vite and the `@noble/*` packages
+  - [x] Move the pitch-deck PDF out of `out/`, which becomes Mill's build directory
+  - [x] Set up the Mill build: core modules, one bounded context (`voting`), the demo product, Vite (skill `mill-module-layout`)
   - [x] Retire `protobuffers/` (Q9); kept on branch `legacy/lua-poc`
-  - [ ] CI on GitHub Actions: compile, tests, Scala.js link
+  - [x] CI on GitHub Actions: compile, tests, Scala.js link
 
-- [ ] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
-  - [ ] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`
-  - [ ] Voting Registry and Voters Registry
-  - [ ] Ballot Issuer (Ed25519-signed ballot tokens)
-  - [ ] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
-  - [ ] Append-only, hash-chained, signed Cast Ledger
-  - [ ] Tally plus an auditor that checks the public invariants (I1–I7)
-  - [ ] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
+- [x] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
+  - [x] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`
+  - [x] Voting Registry (define, open, close) and Voters Registry (import, pseudonyms, ballot-issued flag)
+  - [x] Ballot Issuer (Ed25519-signed ballot tokens)
+  - [x] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
+  - [x] Append-only, hash-chained, signed Cast Ledger
+  - [x] Tally plus an auditor that checks the public invariants (I1–I6; I7 waits for entry timestamps)
+  - [x] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
 
-- [ ] **6. Demo UI** (5–8 days)
-  - [ ] **Owner** panel: create voting, import voters, open and close
-  - [ ] **Voter** panel: authenticate (mock), get ballot, vote, receipt, re-vote
-  - [ ] **Public ledger and auditor** panel: entries, recompute tally, verify signatures and invariants
-  - [ ] Readable signed text everywhere (decision D7 in `docs/README.md`), with an editable ledger line
+- [x] **6. Demo UI** (5–8 days)
+  - [x] **Owner** panel: create voting, import voters, open and close
+  - [x] **Voter** panel: authenticate (mock), get ballot, vote, receipt, re-vote
+  - [x] **Public ledger and auditor** panel: entries, recompute tally, verify signatures and invariants
+  - [x] Readable signed text everywhere (decision D7 in `docs/README.md`), with an editable ledger line
         that turns red when tampered with and green again when restored
-  - [ ] **"Try to cheat"** panel: double ballot, token replay, forged signature,
+  - [x] **"Try to cheat"** panel: double ballot, token replay, forged signature,
         cancel without the secret, double cancel. Each one is visibly rejected.
 
-- [ ] **7. Demo packaging** (3–4 days)
-  - [ ] Scripted scenario with seeded voters and simulated background traffic
-  - [ ] Coercion walkthrough: the coercer sees the receipt, the voter re-votes, the coercer cannot tell
-  - [ ] One-click reset with deterministic seed data
-  - [ ] Static deploy (GitHub Pages) with no backend
+- [x] **7. Demo packaging** (3–4 days)
+  - [x] Scripted scenario with seeded voters and simulated background traffic
+  - [x] Coercion walkthrough: the coercer sees the receipt, the voter re-votes, the coercer cannot tell
+  - [x] One-click reset with deterministic seed data
+  - [x] Static deploy (GitHub Pages) with no backend: `.github/workflows/pages.yml`; needs Pages
+        enabled with source "GitHub Actions"
 
-- [ ] **8. Pitch deck update**
-  - [ ] Align the slides with the design doc's terms and diagrams
-  - [ ] Add prior art and positioning, and state the trust model honestly
-  - [ ] Roadmap slide: everything deliberately left out of the demo
+- [ ] **8. Pitch deck update**: [`doc/pitch-deck-v3`](doc/pitch-deck-v3/pitch-deck-v3.tex) (v1 and v2 kept)
+  - [x] Align the slides with the design doc's terms and diagrams
+  - [x] Add prior art and positioning, and state the trust model honestly
+  - [x] Roadmap slide: everything deliberately left out of the demo
+  - [ ] Check the prior-art facts against their sources (`docs/06-prior-art.md`) before presenting
 
 - [ ] **9. Rehearsal and freeze** (2–3 days)
   - [ ] Three full dry runs, including the "try to cheat" panel and Q&A on the trust model

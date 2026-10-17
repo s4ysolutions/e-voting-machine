@@ -110,7 +110,7 @@ given UseCase[CloseVotingCommand]     = CloseVotingUseCase[TXM]()
 
 ```scala
 // voting.ui.owner.state
-final class OwnerSession(using UseCase[CloseVotingCommand], feed: ChangeFeed):
+final class OwnerSession(using UseCase[CloseVotingCommand])(using feed: ChangeFeed):
   private val _state = Var[OwnerState](OwnerState.Idle)
   val state: Signal[OwnerState] = _state.signal
 

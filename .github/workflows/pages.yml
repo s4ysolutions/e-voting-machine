@@ -1,0 +1,68 @@
+name: Deploy demo to GitHub Pages
+
+# Builds the optimised demo and publishes it as a static site. There is no backend: the whole
+# system runs in the visitor's browser. Requires Settings → Pages → Source: "GitHub Actions".
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/coursier
+            ~/.cache/mill
+          key: mill-${{ runner.os }}-${{ hashFiles('build.mill') }}
+          restore-keys: mill-${{ runner.os }}-
+
+      - name: Link the Scala.js demo
+        run: ./mill --ticker false products.demo.fullLinkJS
+
+      - name: Bundle with Vite
+        run: npm run build
+        env:
+          SCALAJS_OUTPUT: ${{ github.workspace }}/out/products/demo/fullLinkJS.dest/main.js
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: products/demo/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

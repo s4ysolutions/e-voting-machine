@@ -1,10 +1,21 @@
-# Ignore everything in latex-out directory
-latex-out/*
-out/*
+# Mill build output
+out/
 
-# Except PDF files
+# LaTeX output, except the built decks
+latex-out/*
 !latex-out/*.pdf
-!out/*.pdf
+
+# Node / Vite
+node_modules/
+dist/
+
+# Scala tooling
+.bsp/
+.bloop/
+.metals/
+.scala-build/
+.vscode/
+
 # IDE files
 .idea/
 *.iml

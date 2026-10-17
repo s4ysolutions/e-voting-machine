@@ -47,6 +47,10 @@ final class CastUseCase[TX <: Tx](using
 Anonymous `using` parameters are fine when the body only passes them on. Name a parameter
 (`using tm: TransactionManager[TX]`) when the body calls it directly.
 
+One `using` clause is either all anonymous or all named; mixing them
+(`using UseCase[X], feed: ChangeFeed`) does not parse. Put the named ones in a second clause:
+`(using UseCase[X])(using feed: ChangeFeed)`.
+
 ## Capability Bundles
 
 When ports always travel together, give them one parameter object

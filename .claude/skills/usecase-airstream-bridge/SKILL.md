@@ -31,9 +31,8 @@ enum VoterState:
 
 final class VoterSession(using
     UseCase[IssueBallotCommand],
-    UseCase[CastCommand],
-    feed: ChangeFeed
-):
+    UseCase[CastCommand]
+)(using feed: ChangeFeed):
   private val _state = Var[VoterState](VoterState.NoBallot)
   val state: Signal[VoterState] = _state.signal
 
@@ -72,7 +71,7 @@ final class ChangeFeed:
   def notifyChanged(): Unit = bus.writer.onNext(())
 
 // casting.ui.state
-final class LedgerView(using UseCase[LedgerQuery], feed: ChangeFeed):
+final class LedgerView(using UseCase[LedgerQuery])(using feed: ChangeFeed):
   val entries: Signal[Seq[LedgerEntry]] =
     feed.changes.startWith(()).map(_ => LedgerQuery().run.infallible)
 ```
