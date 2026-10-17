@@ -128,6 +128,35 @@ object features extends Module:
     object ui extends BaseJsModule:
       override def moduleDeps = Seq(domain.domainJs, app.appJs, core.ui)
 
+  object voters extends Module:
+
+    object domain extends BaseModule:
+      override def moduleDeps = Seq(core.domain, core.identity, features.voting.domain)
+      object domainJs extends BaseJsModule:
+        override def sources    = Task { domain.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.domain.domainJs, core.identity.identityJs, features.voting.domain.domainJs)
+
+      object workflows extends BaseModule:
+        override def moduleDeps = Seq(domain, core.tx)
+        object tests extends BaseTests:
+          override def moduleDeps = super.moduleDeps ++ Seq(voters.infra.memory)
+        object workflowsJs extends BaseJsModule:
+          override def sources    = Task { workflows.sources() ++ super.sources() }
+          override def moduleDeps = Seq(domain.domainJs, core.tx.txJs)
+
+    object app extends BaseModule:
+      override def moduleDeps = Seq(core.app, domain, domain.workflows)
+      object appJs extends BaseJsModule:
+        override def sources    = Task { app.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.app.appJs, domain.domainJs, domain.workflows.workflowsJs)
+
+    object infra extends Module:
+      object memory extends BaseModule:
+        override def moduleDeps = Seq(domain.workflows, core.infra.memory, core.identity.mint)
+        object memoryJs extends BaseJsModule:
+          override def sources    = Task { memory.sources() ++ super.sources() }
+          override def moduleDeps = Seq(domain.workflows.workflowsJs, core.infra.memory.memoryJs, core.identity.mint.mintJs)
+
 // ---------------------------------------------------------------------------
 // products: composition roots
 // ---------------------------------------------------------------------------
