@@ -46,6 +46,16 @@ trait BaseJsModule extends BaseModule with ScalaJSModule:
   override def moduleKind = ModuleKind.ESModule   // Vite consumes ES modules
 ```
 
+`ScalaTests` is an inner trait of `ScalaModule`, so a shared test trait must be declared inside
+`BaseModule` too:
+
+```scala
+trait BaseModule extends ScalaModule:
+  // …
+  trait BaseTests extends ScalaTests, TestModule.ScalaTest:
+    override def mvnDeps = Seq(D.scalatest)
+```
+
 `BaseModule` is the JVM side of every cross-compiled module. `BaseJsModule` is used for JS twins
 and for JS-only modules (`ui`, `core.infra.noble`, `products.demo`).
 
@@ -235,8 +245,8 @@ Mill writes all build output to `out/`. Nothing else may live there.
 Test modules are nested inside the module they test.
 
 ```bash
-./mill __.test                          # every test module
-./mill features.casting.__.test         # one feature
+./mill __.testForked                    # every test module (Mill 1.x has no `test` task)
+./mill features.casting.__.testForked   # one feature
 ./mill features.casting.domain.compile  # compile check only
 ```
 
