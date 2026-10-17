@@ -19,8 +19,8 @@ The demo is one **Scala 3 + Scala.js** app that runs entirely in the browser:
 | Crypto | `@noble/ed25519` + `@noble/hashes` through a Scala.js facade (browser); JDK Ed25519 (JVM tests) |
 | Tests | ScalaTest |
 
-Legacy code still in the tree (`lua-reference/`, `web-ui/`, `ui/`, `protobuffers/`) is not part of
-the new stack; step 4 of `PLAN.md` archives or removes it.
+The original Lua proof of concept, the TypeScript and Flutter prototypes and the protobuf API are
+kept on the branch `legacy/lua-poc`; they are not part of `main`.
 
 ## Skills
 

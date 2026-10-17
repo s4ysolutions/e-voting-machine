@@ -30,12 +30,13 @@ Effort estimates are for one experienced developer.
 - [ ] **4. Repository restructuring**
   - [ ] Top-level `README.md`: what this is, current status, how to run the demo
   - [ ] Choose a license that permits auditing and patches (CC BY-NC-ND forbids derivatives)
-  - [ ] Move `lua-reference/` to `archive/` as the original proof of concept
-  - [ ] Remove the unused Flutter template `ui/`
-  - [ ] Remove `web-ui/` (TypeScript prototype); replace the root `package.json` (ts-proto) with one listing Vite and the `@noble/*` packages
+  - [x] Archive the original Lua proof of concept: kept on branch `legacy/lua-poc`, removed from `main`
+  - [x] Remove the unused Flutter template `ui/`
+  - [x] Remove `web-ui/` (TypeScript prototype) and the ts-proto `package.json`
+  - [ ] Add a root `package.json` listing Vite and the `@noble/*` packages
   - [ ] Move the pitch-deck PDF out of `out/`, which becomes Mill's build directory
   - [ ] Set up the Mill build: core modules, one bounded context, the demo product, Vite (skill `mill-module-layout`)
-  - [ ] Replace or retire `protobuffers/` to match the v1 design
+  - [x] Retire `protobuffers/` (Q9); kept on branch `legacy/lua-poc`
   - [ ] CI on GitHub Actions: compile, tests, Scala.js link
 
 - [ ] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
