@@ -31,7 +31,7 @@ npm install                              # Vite and the npm packages the app imp
 npm run dev                              # terminal 2: serve http://localhost:5173 with hot reload
 ```
 
-Tests:
+Tests (run `npm install` first: the Scala.js tests load the `@noble` packages):
 
 ```bash
 ./mill __.testForked                     # every test module

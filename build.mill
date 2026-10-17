@@ -47,6 +47,11 @@ object core extends Module:
     object appJs extends BaseJsModule:
       override def sources = Task { app.sources() ++ super.sources() }
 
+  object crypto extends BaseModule:                       // Crypto, Signer[P], Signed[P, T], ReadableName
+    object tests extends BaseTests
+    object cryptoJs extends BaseJsModule:
+      override def sources = Task { crypto.sources() ++ super.sources() }
+
   object tx extends BaseModule:                           // Tx, TransactionManager[TX]
     override def moduleDeps = Seq(core.domain)
     object txJs extends BaseJsModule:
@@ -60,6 +65,15 @@ object core extends Module:
       object memoryJs extends BaseJsModule:
         override def sources    = Task { memory.sources() ++ super.sources() }
         override def moduleDeps = Seq(core.tx.txJs)
+
+    object jdk extends BaseModule:                        // JVM only: JDK Ed25519 + SHA-256
+      override def moduleDeps = Seq(core.crypto)
+      object tests extends BaseTests
+
+    object noble extends BaseJsModule:                    // JS only: @noble/* facades
+      override def moduleDeps = Seq(core.crypto.cryptoJs)
+      object tests extends ScalaJSTests, TestModule.ScalaTest:
+        override def mvnDeps = Seq(D.scalatest)
 
   object ui extends BaseJsModule:                         // ChangeFeed, shared Laminar pieces
     override def mvnDeps = Seq(D.laminar)
