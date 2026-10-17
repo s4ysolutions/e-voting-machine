@@ -52,6 +52,17 @@ object core extends Module:
     object cryptoJs extends BaseJsModule:
       override def sources = Task { crypto.sources() ++ super.sources() }
 
+  object identity extends BaseModule:                     // Identifier[A]; no way to construct one
+    object identityJs extends BaseJsModule:
+      override def sources = Task { identity.sources() ++ super.sources() }
+
+    object mint extends BaseModule:                       // constructs Identifier; adapters + ui only
+      override def moduleDeps = Seq(identity)
+      object tests extends BaseTests
+      object mintJs extends BaseJsModule:
+        override def sources    = Task { mint.sources() ++ super.sources() }
+        override def moduleDeps = Seq(identity.identityJs)
+
   object tx extends BaseModule:                           // Tx, TransactionManager[TX]
     override def moduleDeps = Seq(core.domain)
     object txJs extends BaseJsModule:

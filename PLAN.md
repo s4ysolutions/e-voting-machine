@@ -40,8 +40,8 @@ Effort estimates are for one experienced developer.
   - [x] CI on GitHub Actions: compile, tests, Scala.js link
 
 - [ ] **5. Core domain in Scala 3 (pure and tested)** (4–6 days)
-  - [ ] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`
-  - [ ] Voting Registry and Voters Registry
+  - [x] `core`: `Validated`, crypto capabilities with noble and JDK adapters, `Identifier`, `atomically`, `UseCase[C]`
+  - [ ] Voting Registry (done: define, open, close) and Voters Registry
   - [ ] Ballot Issuer (Ed25519-signed ballot tokens)
   - [ ] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
   - [ ] Append-only, hash-chained, signed Cast Ledger
