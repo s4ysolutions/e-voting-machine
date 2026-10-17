@@ -157,6 +157,38 @@ object features extends Module:
           override def sources    = Task { memory.sources() ++ super.sources() }
           override def moduleDeps = Seq(domain.workflows.workflowsJs, core.infra.memory.memoryJs, core.identity.mint.mintJs)
 
+  object ballots extends Module:
+
+    object domain extends BaseModule:
+      override def moduleDeps = Seq(core.domain, core.crypto, features.voting.domain, features.voters.domain)
+      object tests extends BaseTests:
+        override def moduleDeps = super.moduleDeps ++ Seq(core.infra.jdk)
+      object domainJs extends BaseJsModule:
+        override def sources    = Task { domain.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.domain.domainJs, core.crypto.cryptoJs,
+                                      features.voting.domain.domainJs, features.voters.domain.domainJs)
+
+      object workflows extends BaseModule:
+        override def moduleDeps = Seq(domain, core.tx)
+        object tests extends BaseTests:
+          override def moduleDeps = super.moduleDeps ++ Seq(ballots.infra.memory, core.infra.jdk)
+        object workflowsJs extends BaseJsModule:
+          override def sources    = Task { workflows.sources() ++ super.sources() }
+          override def moduleDeps = Seq(domain.domainJs, core.tx.txJs)
+
+    object app extends BaseModule:
+      override def moduleDeps = Seq(core.app, domain, domain.workflows)
+      object appJs extends BaseJsModule:
+        override def sources    = Task { app.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.app.appJs, domain.domainJs, domain.workflows.workflowsJs)
+
+    object infra extends Module:
+      object memory extends BaseModule:
+        override def moduleDeps = Seq(domain.workflows, core.infra.memory)
+        object memoryJs extends BaseJsModule:
+          override def sources    = Task { memory.sources() ++ super.sources() }
+          override def moduleDeps = Seq(domain.workflows.workflowsJs, core.infra.memory.memoryJs)
+
 // ---------------------------------------------------------------------------
 // products: composition roots
 // ---------------------------------------------------------------------------
