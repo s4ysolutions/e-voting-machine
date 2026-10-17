@@ -64,10 +64,11 @@ Effort estimates are for one experienced developer.
   - [x] Static deploy (GitHub Pages) with no backend: `.github/workflows/pages.yml`; needs Pages
         enabled with source "GitHub Actions"
 
-- [ ] **8. Pitch deck update**
-  - [ ] Align the slides with the design doc's terms and diagrams
-  - [ ] Add prior art and positioning, and state the trust model honestly
-  - [ ] Roadmap slide: everything deliberately left out of the demo
+- [ ] **8. Pitch deck update**: [`doc/pitch-deck-v3`](doc/pitch-deck-v3/pitch-deck-v3.tex) (v1 and v2 kept)
+  - [x] Align the slides with the design doc's terms and diagrams
+  - [x] Add prior art and positioning, and state the trust model honestly
+  - [x] Roadmap slide: everything deliberately left out of the demo
+  - [ ] Check the prior-art facts against their sources (`docs/06-prior-art.md`) before presenting
 
 - [ ] **9. Rehearsal and freeze** (2–3 days)
   - [ ] Three full dry runs, including the "try to cheat" panel and Q&A on the trust model

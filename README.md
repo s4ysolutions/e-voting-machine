@@ -62,7 +62,7 @@ products/wiring/ shared wiring of every context (VotingSystem)
 products/harness/ JVM scenario DSL and end-to-end tests
 products/demo/   composition root, page, stylesheet and Vite config
 docs/            design
-doc/             pitch decks (LaTeX)
+doc/             pitch decks (LaTeX); pitch-deck-v3 matches the design and the demo
 ```
 
 Each bounded context is split into one Mill module per layer, so the compiler enforces the
