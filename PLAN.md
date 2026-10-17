@@ -45,7 +45,7 @@ Effort estimates are for one experienced developer.
   - [x] Ballot Issuer (Ed25519-signed ballot tokens)
   - [x] Cast Service: cast, cancel and re-vote, spent-token and cancelled-cast checks
   - [x] Append-only, hash-chained, signed Cast Ledger
-  - [ ] Tally plus an auditor that checks the public invariants (I1–I7)
+  - [x] Tally plus an auditor that checks the public invariants (I1–I6; I7 waits for entry timestamps)
   - [ ] ScalaTest on the JVM for every flow and every rejection path, plus the scenario DSL
 
 - [ ] **6. Demo UI** (5–8 days)

@@ -219,6 +219,18 @@ object features extends Module:
           override def sources    = Task { memory.sources() ++ super.sources() }
           override def moduleDeps = Seq(domain.workflows.workflowsJs, core.infra.memory.memoryJs)
 
+  object audit extends Module:
+
+    object domain extends BaseModule:                     // pure: tally and invariants over public data
+      override def moduleDeps = Seq(core.crypto, features.voting.domain, features.ballots.domain, features.casting.domain)
+      object tests extends BaseTests:
+        override def moduleDeps = super.moduleDeps ++
+          Seq(features.casting.domain.workflows, features.casting.infra.memory, core.infra.jdk)
+      object domainJs extends BaseJsModule:
+        override def sources    = Task { domain.sources() ++ super.sources() }
+        override def moduleDeps = Seq(core.crypto.cryptoJs, features.voting.domain.domainJs,
+                                      features.ballots.domain.domainJs, features.casting.domain.domainJs)
+
 // ---------------------------------------------------------------------------
 // products: composition roots
 // ---------------------------------------------------------------------------
